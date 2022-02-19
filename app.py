@@ -60,7 +60,7 @@ print('done. time elapsed',dt.datetime.now() - start_com)
         
 
 start_final = dt.datetime.now()
-print('calculating totals and exporting final df',start_final)
+print('calculating totals and exporting top 1M rows',start_final)
 
 totals = []
 pairings_strings = []
@@ -74,7 +74,7 @@ for p in permutations:
     totals.append(total)
     pairings_strings.append(string)
 
-final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_values(by='score',ascending=False)
+final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_values(by='score',ascending=False).iloc[:1000000]
 
 final_df.to_csv('result.csv')
 print('done. time elapsed', dt.datetime.now() - start_final)
