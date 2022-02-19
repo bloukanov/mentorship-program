@@ -86,6 +86,6 @@ final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_value
 
 final_df.to_csv('result.csv')
 
-print('all done'.dt.datetime.now() - start_final)
+print('all done',dt.datetime.now() - start_final)
 
 
