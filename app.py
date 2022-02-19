@@ -84,6 +84,8 @@ for i in final:
 
 final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_values(by='score',ascending=False)
 
+final_df.to_csv('result.csv')
+
 print('all done'.dt.datetime.now() - start_final)
 
 
