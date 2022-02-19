@@ -22,7 +22,7 @@ for i in mentees:
         pairs_scores[i+'_'+j] = sum(1/matches['rank'])
 
 # pd.Series(pairs_scores).sort_values(ascending=False)
-print('finished calcualting '+len(pairs_scores)+' scores',dt.datetime.now() - start_pairs)
+print('finished calcualting '+str(len(pairs_scores))+' scores',dt.datetime.now() - start_pairs)
 
 # choose the pairings that result in the greatest total score
 if len(mentors) <= len(mentees):
@@ -40,7 +40,7 @@ start_com = dt.datetime.now()
 print('enumerating all possibilities',start_com)
 
 pairs_sets = list(itertools.combinations(poss_pairs,n_pairs))
-print('finished enumerating ' + len(pairs_sets) + ' combinations',dt.datetime.now() - start_com)
+print('finished enumerating ' + str(len(pairs_sets)) + ' combinations',dt.datetime.now() - start_com)
 
 start_paring = dt.datetime.now()
 print('paring down to eligible combinations',start_paring)
@@ -62,7 +62,7 @@ for i in pairs_sets:
     if len(firsts) == n_pairs and len(seconds) == n_pairs:
         final.append([a[0] + '_' + a[1] for a in list(zip(firsts,seconds))])
 
-print('pared down to '+len(final)+' eligible pairings',dt.datetime.now() - start_paring)
+print('pared down to '+str(len(final))+' eligible pairings',dt.datetime.now() - start_paring)
 
 start_final = dt.datetime.now()
 print('calculating totals and preparing final df',start_final)
