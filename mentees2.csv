@@ -1,0 +1,21 @@
+﻿name,interest,rank
+Bob,Leadership,1
+Bob,Data Science,2
+Bob,Analytics,3
+Bob,Front-line Fundraising,4
+Andrew,Data Science,1
+Andrew,Analytics,2
+Andrew,Front-line Fundraising,3
+Andrew,Leadership,4
+Liz,Leadership,1
+a,Leadership,1
+a,Data Science,2
+a,Analytics,3
+b,Front-line Fundraising,1
+b,Data Science,2
+c,Analytics,1
+c,Front-line Fundraising,2
+c,Leadership,3
+d,Leadership,1
+d,Data Science,2
+d,Analytics,3
