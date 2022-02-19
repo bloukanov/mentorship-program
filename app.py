@@ -76,7 +76,7 @@ for p in permutations:
 
 final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_values(by='score',ascending=False).iloc[:1000000]
 
-final_df.to_csv('result.csv')
+final_df.to_csv('result.csv',index=False)
 print('done. time elapsed', dt.datetime.now() - start_final)
 
 print('all done. time elapsed',dt.datetime.now() - start_all)
