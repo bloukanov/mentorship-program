@@ -35,7 +35,11 @@ pairs_scores = {}
 for i in limiting_group:
     for j in other_group:
         matches = limiting_df.loc[limiting_df.name == i,['interest','rank']].merge(other_df.loc[other_df.name==j,'interest'])
-        pairs_scores[i+'_'+j] = sum(1/matches['rank']) # 0 if no interests match
+        if sum(1/matches['rank']) != 0:
+            pairs_scores[i+'_'+j] = sum(1/matches['rank'])
+        # penalize non-matches
+        else:
+            pairs_scores[i+'_'+j] = -1
 
 poss_pairs = iter(list(pairs_scores.keys()))
 
