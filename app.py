@@ -99,7 +99,7 @@ else:
     from collections import Counter
     from copy import copy
 
-    n = 100000
+    n = 3000000
 
     hyper_proposals = []
     totals = []
