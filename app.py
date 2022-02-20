@@ -119,9 +119,6 @@ else:
 
     for i in range(n):
 
-        if i%100 == 0:
-            print(i,max(totals))
-
         # obtain a random order of limiting_group
         # man_list = list(limiting_group)
         man_list = list(pd.Series(limiting_group).sample(frac = 1))
@@ -178,6 +175,9 @@ else:
 
         hyper_proposals.append(proposals)
         totals.append(sum(proposals.values()))
+
+        if i%100 == 0:
+            print(i,max(totals))
 
     winning_total = max(totals)
     print(winning_total)
