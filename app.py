@@ -92,7 +92,8 @@ if possibilities < 3000000:
     print('all done. time elapsed',dt.datetime.now() - start_all)
 
 # otherwise, Gale-Shapley algorithm does pretty well (https://towardsdatascience.com/gale-shapley-algorithm-simply-explained-caa344e643c2)
-# with groups of 10 and 9, it scored in the top 1.35% of all possible groupings. randomizing the list doesnt seem to help..
+# with groups of 10 and 9, it scored in the top 1.35% of all possible groupings.
+# randomizing the list with 100k iterations did not help
 else:
 
     from collections import Counter
@@ -119,7 +120,7 @@ else:
     for i in range(n):
 
         if i%100 == 0:
-            print(i)
+            print(i,max(totals))
 
         # obtain a random order of limiting_group
         # man_list = list(limiting_group)
@@ -178,8 +179,9 @@ else:
         hyper_proposals.append(proposals)
         totals.append(sum(proposals.values()))
 
-    winning_indices = [i for i, x in enumerate(totals) if x == max(totals)]
-    winning_proposals = [hyper_proposals[i] for i in winning_indices]
     winning_total = max(totals)
     print(winning_total)
+    winning_indices = [i for i, x in enumerate(totals) if x == winning_total]
+    winning_proposals = [hyper_proposals[i] for i in winning_indices]
+
         
