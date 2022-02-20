@@ -8,8 +8,8 @@ import math
 start_all = dt.datetime.now()
 
 df_interests = pd.read_csv('interests.csv')
-df_mentees = pd.read_csv('mentees2.csv')
-df_mentors = pd.read_csv('mentors2.csv')
+df_mentees = pd.read_csv('mentees3.csv')
+df_mentors = pd.read_csv('mentors3.csv')
 
 mentees = df_mentees.name.unique()
 mentors = df_mentors.name.unique()
@@ -46,14 +46,17 @@ poss_pairs = iter(list(pairs_scores.keys()))
 # pd.Series(pairs_scores).sort_values(ascending=False)
 print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.datetime.now() - start_pairs)
 
-# choose the pairings that result in the greatest total score
+# total possibilities = (other_group)P(limiting_group) = n!/(n-r)!
+possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
-# can enumerate all possibilities only if 10 or fewer pairs can be made, because
-# possibilities = (n_pairs)!. 10! = 3,628,800
-if n_pairs <= 10:
+# if there are fewer than 5M possibilities, go for it
+if possibilities < 5000000:
+
+    # choose the pairings that result in the greatest total score
 
     start_com = dt.datetime.now()
-    print('enumerating '+format(math.factorial(n_pairs),',d')+' possibilities',start_com)
+    #nPr = n!/(n-r)!
+    print('enumerating '+format(possibilities,',d')+' possibilities',start_com)
 
     # pairs_sets = list(itertools.combinations(poss_pairs,n_pairs)) # blows up way too quickly
 
@@ -88,14 +91,19 @@ if n_pairs <= 10:
 
     print('all done. time elapsed',dt.datetime.now() - start_all)
 
+# otherwise, Gale-Shapley algorithm does pretty well (https://towardsdatascience.com/gale-shapley-algorithm-simply-explained-caa344e643c2)
+# with groups of 10 and 9, it scored in the top 1.35% of all possible groupings. randomizing the list doesnt seem to help..
 else:
-## GALE SHAPLEY THEOREM
 
     from collections import Counter
     from copy import copy
 
-    man_list = list(limiting_group)
-    women_list = list(other_group)
+    n = 10
+
+    hyper_proposals = []
+    totals = []
+
+    # women_list = list(other_group)
 
     # women_df = pd.DataFrame({'A': [3,4,2,1], 'B': [3,1,4,2], 'C':[2,3,4,1], 'D':[3,2,1,4]})
     # women_df.index = man_list
@@ -103,56 +111,74 @@ else:
     # man_df = pd.DataFrame({'A': [1,1,2,4], 'B': [2,4,1,2], 'C':[3,3,3,3], 'D':[4,2,4,1]})
     # man_df.index = man_list
 
-    scores_df = pd.DataFrame(np.nan,index=man_list,columns=women_list)
+    scores_df = pd.DataFrame(np.nan,index=limiting_group,columns=other_group)
     for i in limiting_group:
         for j in other_group:
             scores_df.loc[i,j] = pairs_scores[i+'_'+j]
 
-    # dict to control which women each man can make proposals
-    women_available = {man:women_list for man in man_list}
-    # waiting list of men that were able to create pair on each iteration
-    waiting_list = []
-    # dict to store created pairs
-    proposals = {}
-    # variable to count number of iterations
-    count = 0
+    for i in range(n):
 
-    # while not all men have pairs
-    while len(waiting_list)<len(man_list):
-        print(count)
-        # man makes proposals
-        for man in man_list:
-            if man not in waiting_list:
-                # each man make proposal to the top women from it's list
-                women = women_available[man]
-                # best_choice = man_df.loc[man][man_df.loc[man].index.isin(women)].idxmin()
-                best_choice = scores_df.loc[man][scores_df.loc[man].index.isin(women)].idxmax()
-                # proposals[(man, best_choice)]=(man_df.loc[man][best_choice],
-                #                                     women_df.loc[man][best_choice])
-                proposals[(man, best_choice)] = scores_df.loc[man,best_choice]
-        # if women have more than one proposals 
-        # she will choose the best option
-        overlays = Counter([key[1] for key in proposals.keys()])
-        # cycle to choose the best options
-        for women in overlays.keys():
-            if overlays[women]>1:
-                # pairs to drop from proposals
-                pairs_to_drop = sorted({pair: proposals[pair] for pair in proposals.keys() 
-                        if women in pair}.items(), 
-                    # key=lambda x: x[1][1]
-                    key = lambda x: x[1],
-                    reverse = True
-                    )[1:]
-                # if man was rejected by woman
-                # there is no pint for him to make proposal 
-                # second time to the same woman
-                for p_to_drop in pairs_to_drop:
-                    del proposals[p_to_drop[0]]
-                    _women = copy(women_available[p_to_drop[0][0]])
-                    _women.remove(p_to_drop[0][1])
-                    women_available[p_to_drop[0][0]] = _women
-        # man who successfully created pairs must be added to the waiting list 
-        waiting_list = [man[0] for man in proposals.keys()]
-        # update counter
-        count+=1
+        print(i)
+
+        # obtain a random order of limiting_group
+        # man_list = list(limiting_group)
+        man_list = list(pd.Series(limiting_group).sample(frac = 1))
+        # women_list = list(pd.Series(other_group).sample(frac = 1))
+        women_list = list(other_group)
+
+        # dict to control which women each man can make proposals
+        women_available = {man:women_list for man in man_list}
+        # waiting list of men that were able to create pair on each iteration
+        waiting_list = []
+        # dict to store created pairs
+        proposals = {}
+        # variable to count number of iterations
+        count = 0
+
+        # while not all men have pairs
+        while len(waiting_list)<len(man_list):
+            # print(count)
+            # man makes proposals
+            for man in man_list:
+                if man not in waiting_list:
+                    # each man make proposal to the top women from it's list
+                    women = women_available[man]
+                    # best_choice = man_df.loc[man][man_df.loc[man].index.isin(women)].idxmin()
+                    best_choice = scores_df.loc[man][scores_df.loc[man].index.isin(women)].idxmax()
+                    # proposals[(man, best_choice)]=(man_df.loc[man][best_choice],
+                    #                                     women_df.loc[man][best_choice])
+                    proposals[(man, best_choice)] = scores_df.loc[man,best_choice]
+            # if women have more than one proposals 
+            # she will choose the best option
+            overlays = Counter([key[1] for key in proposals.keys()])
+            # cycle to choose the best options
+            for women in overlays.keys():
+                if overlays[women]>1:
+                    # pairs to drop from proposals
+                    pairs_to_drop = sorted({pair: proposals[pair] for pair in proposals.keys() 
+                            if women in pair}.items(), 
+                        # key=lambda x: x[1][1]
+                        key = lambda x: x[1],
+                        reverse = True
+                        )[1:]
+                    # if man was rejected by woman
+                    # there is no pint for him to make proposal 
+                    # second time to the same woman
+                    for p_to_drop in pairs_to_drop:
+                        del proposals[p_to_drop[0]]
+                        _women = copy(women_available[p_to_drop[0][0]])
+                        _women.remove(p_to_drop[0][1])
+                        women_available[p_to_drop[0][0]] = _women
+            # man who successfully created pairs must be added to the waiting list 
+            waiting_list = [man[0] for man in proposals.keys()]
+            # update counter
+            count+=1
+
+        hyper_proposals.append(proposals)
+        totals.append(sum(proposals.values()))
+
+    winning_indices = [i for i, x in enumerate(totals) if x == max(totals)]
+    winning_proposals = [hyper_proposals[i] for i in winning_indices]
+    winning_total = max(totals)
+    print(winning_total)
         
