@@ -50,7 +50,7 @@ print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.
 possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
 # if there are fewer than 5M possibilities, go for it
-if possibilities < 5000000:
+if possibilities < 3000000:
 
     # choose the pairings that result in the greatest total score
 
@@ -98,7 +98,7 @@ else:
     from collections import Counter
     from copy import copy
 
-    n = 10
+    n = 100000
 
     hyper_proposals = []
     totals = []
@@ -118,7 +118,8 @@ else:
 
     for i in range(n):
 
-        print(i)
+        if i%10 == 0:
+            print(i)
 
         # obtain a random order of limiting_group
         # man_list = list(limiting_group)
