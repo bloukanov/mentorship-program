@@ -93,13 +93,15 @@ if possibilities < 3000000:
 
 # otherwise, Gale-Shapley algorithm does pretty well (https://towardsdatascience.com/gale-shapley-algorithm-simply-explained-caa344e643c2)
 # with groups of 10 and 9, it scored in the top 1.35% of all possible groupings.
-# randomizing the list with 100k iterations did not help
+# randomizing the list with 350k iterations did not help
+# adding just 1 more interest, so no mentee has just one, improved performance significantly. 
+# it tied for 62nd place out of 3,628,800
 else:
 
     from collections import Counter
     from copy import copy
 
-    n = 3000000
+    n = 100
 
     hyper_proposals = []
     totals = []
@@ -161,7 +163,7 @@ else:
                         reverse = True
                         )[1:]
                     # if man was rejected by woman
-                    # there is no pint for him to make proposal 
+                    # there is no point for him to make proposal 
                     # second time to the same woman
                     for p_to_drop in pairs_to_drop:
                         del proposals[p_to_drop[0]]
@@ -183,5 +185,6 @@ else:
     print(winning_total)
     winning_indices = [i for i, x in enumerate(totals) if x == winning_total]
     winning_proposals = [hyper_proposals[i] for i in winning_indices]
+    unique_winning_proposals = list(map(dict, frozenset(frozenset(i.items()) for i in winning_proposals)))
 
         
