@@ -118,7 +118,7 @@ else:
 
     for i in range(n):
 
-        if i%10 == 0:
+        if i%100 == 0:
             print(i)
 
         # obtain a random order of limiting_group
