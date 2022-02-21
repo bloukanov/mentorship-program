@@ -8,8 +8,8 @@ import math
 start_all = dt.datetime.now()
 
 df_interests = pd.read_csv('interests.csv')
-df_mentees = pd.read_csv('mentees3.csv')
-df_mentors = pd.read_csv('mentors3.csv')
+df_mentees = pd.read_csv('mentees.csv')
+df_mentors = pd.read_csv('mentors.csv')
 
 mentees = df_mentees.name.unique()
 mentors = df_mentors.name.unique()
@@ -151,12 +151,14 @@ else:
                             if women in pair}.items(), 
                         # key=lambda x: x[1][1]
                         # return tuple for key, second item is max match with OTHER available woman, ASC
-                        key = lambda x: (x[1],
-                        # second sort condition makes script slower, but removes need for repetition
+                        key = lambda x: (-x[1],
+                        # second sort condition makes script slower, but decreases need for repetition
+                        # TODO: NEEDS FURTHER TESTING. SOMETIMES COUNTERINTUITIVE RESULTS -- IS IT BC 
+                        # OF SPECIFIC EXAMPLES / FURTHER TIES?
                                         max(scores_df.loc[x[0][0],eval('women_'+x[0][0])]
                                             [scores_df.loc[x[0][0],eval('women_'+x[0][0])].index != x[0][1]])
                                     )
-                        ,reverse = True
+                        # ,reverse = True
                         )[1:]
                     # if man was rejected by woman
                     # there is no point for him to make proposal 
