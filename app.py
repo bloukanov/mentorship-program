@@ -96,6 +96,7 @@ if possibilities < 3000000:
 # randomizing the list with 350k iterations did not help
 # adding just 1 more interest, so no mentee has just one, improved performance significantly. 
 # it tied for 62nd place out of 3,628,800
+# it also added a little more variation between randomizations
 else:
 
     from collections import Counter
@@ -159,7 +160,8 @@ else:
                     pairs_to_drop = sorted({pair: proposals[pair] for pair in proposals.keys() 
                             if women in pair}.items(), 
                         # key=lambda x: x[1][1]
-                        key = lambda x: x[1],
+                        # TODO: return tuple for key, second item is max OTHER match score ASC
+                        key = lambda x: (x[1],-max(scores_df.loc[x[0][0]][scores_df.loc[x][x][x]!=x[1]])),
                         reverse = True
                         )[1:]
                     # if man was rejected by woman
