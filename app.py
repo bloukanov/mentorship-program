@@ -8,8 +8,8 @@ import math
 start_all = dt.datetime.now()
 
 df_interests = pd.read_csv('interests.csv')
-df_mentees = pd.read_csv('mentees.csv')
-df_mentors = pd.read_csv('mentors.csv')
+df_mentees = pd.read_csv('mentees2.csv')
+df_mentors = pd.read_csv('mentors2.csv')
 
 mentees = df_mentees.name.unique()
 mentors = df_mentors.name.unique()
@@ -49,7 +49,7 @@ print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.
 possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
 # if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score
-if possibilities < 3000000:
+if possibilities < 5000000:
 
     # penalize non-matches. this does not matter for Gale-Shapley bc it is only about individual order
     pairs_scores[pairs_scores == 0] = -1
@@ -92,7 +92,7 @@ else:
     from collections import Counter
     from copy import copy
 
-    n = 100
+    n = 1000
 
     hyper_proposals = []
     totals = []
@@ -153,10 +153,14 @@ else:
                         # return tuple for key, second item is max match with OTHER available woman, ASC
                         key = lambda x: (-x[1],
                         # second sort condition makes script slower, but decreases need for repetition
-                        # TODO: NEEDS FURTHER TESTING. SOMETIMES COUNTERINTUITIVE RESULTS -- IS IT BC 
+                        # TODO: TIE-HANDLING
+                        # NEEDS FURTHER TESTING. SOMETIMES COUNTERINTUITIVE RESULTS -- IS IT BC 
                         # OF SPECIFIC EXAMPLES / FURTHER TIES?
-                                        max(scores_df.loc[x[0][0],eval('women_'+x[0][0])]
-                                            [scores_df.loc[x[0][0],eval('women_'+x[0][0])].index != x[0][1]])
+                        # have tried sum, max, -sum, -max. none has yet beat randomization
+                        # but why does randomization help if ties will be broken by man's name..
+                        # 
+                                        # sum(scores_df.loc[x[0][0],eval('women_'+x[0][0])]
+                                            # [scores_df.loc[x[0][0],eval('women_'+x[0][0])].index != x[0][1]])
                                     )
                         # ,reverse = True
                         )[1:]
