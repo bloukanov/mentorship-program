@@ -35,46 +35,31 @@ pairs_scores = {}
 for i in limiting_group:
     for j in other_group:
         matches = limiting_df.loc[limiting_df.name == i,['interest','rank']].merge(other_df.loc[other_df.name==j,'interest'])
-        if sum(1/matches['rank']) != 0:
-            pairs_scores[i+'_'+j] = sum(1/matches['rank'])
-        # penalize non-matches
-        else:
-            pairs_scores[i+'_'+j] = -1
+        pairs_scores[i+'_'+j] = sum(1/matches['rank'])
 
 poss_pairs = iter(list(pairs_scores.keys()))
 
 # pd.Series(pairs_scores).sort_values(ascending=False)
 print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.datetime.now() - start_pairs)
 
+# doesn't matter which group is Combinations and which is Permutations.
+# But if define smaller group to be combinations, then there is only 1 way to choose itself.
+# therefore:
 # total possibilities = (other_group)P(limiting_group) = n!/(n-r)!
 possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
-# if there are fewer than 5M possibilities, go for it
+# if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score
 if possibilities < 3000000:
 
-    # choose the pairings that result in the greatest total score
+    # penalize non-matches. this does not matter for Gale-Shapley bc it is only about individual order
+    pairs_scores[pairs_scores == 0] = -1
 
-    start_com = dt.datetime.now()
-    #nPr = n!/(n-r)!
-    print('enumerating '+format(possibilities,',d')+' possibilities',start_com)
-
-    # pairs_sets = list(itertools.combinations(poss_pairs,n_pairs)) # blows up way too quickly
-
-    # for i in range(len(other_group)**len(limiting_group)) # also blows up way too much
-
-    # doesn't matter which group is Combinations and which is Permutations. If smaller group is
-    # C, then it is n_pairsCn_pairs, which is just the group itself.
-    permutations = list(itertools.permutations(iter(other_group),n_pairs))
-
-    print('done. time elapsed',dt.datetime.now() - start_com)
-            
-
-    start_final = dt.datetime.now()
-    print('calculating totals and exporting top 1M rows',start_final)
+    start_loop = dt.datetime.now()
+    print('looping through '+format(possibilities,',d')+' possibilities',start_loop)
 
     totals = []
     pairings_strings = []
-    for p in permutations:
+    for p in itertools.permutations(iter(other_group),n_pairs):
         total = 0
         string = ''
         for i in range(n_pairs):
@@ -83,13 +68,18 @@ if possibilities < 3000000:
             string += '__' + pair
         totals.append(total)
         pairings_strings.append(string)
+    
+    print('done. time elapsed', dt.datetime.now() - start_loop)
+
+    start_final = dt.datetime.now()
+    print('creating sorted table and exporting top 1M rows',start_final)
 
     final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_values(by='score',ascending=False).iloc[:1000000]
 
     final_df.to_csv('result.csv',index=False)
     print('done. time elapsed', dt.datetime.now() - start_final)
 
-    print('all done. time elapsed',dt.datetime.now() - start_all)
+    print('all done. total time elapsed',dt.datetime.now() - start_all)
 
 # otherwise, Gale-Shapley algorithm does pretty well (https://towardsdatascience.com/gale-shapley-algorithm-simply-explained-caa344e643c2)
 # with groups of 10 and 9, it scored in the top 1.35% of all possible groupings.
@@ -144,9 +134,9 @@ else:
             for man in man_list:
                 if man not in waiting_list:
                     # each man make proposal to the top women from it's list
-                    women = women_available[man]
+                    globals()['women_'+man] = women_available[man]
                     # best_choice = man_df.loc[man][man_df.loc[man].index.isin(women)].idxmin()
-                    best_choice = scores_df.loc[man][scores_df.loc[man].index.isin(women)].idxmax()
+                    best_choice = scores_df.loc[man][scores_df.loc[man].index.isin(eval('women_'+man))].idxmax()
                     # proposals[(man, best_choice)]=(man_df.loc[man][best_choice],
                     #                                     women_df.loc[man][best_choice])
                     proposals[(man, best_choice)] = scores_df.loc[man,best_choice]
@@ -160,9 +150,13 @@ else:
                     pairs_to_drop = sorted({pair: proposals[pair] for pair in proposals.keys() 
                             if women in pair}.items(), 
                         # key=lambda x: x[1][1]
-                        # TODO: return tuple for key, second item is max OTHER match score ASC
-                        key = lambda x: (x[1],-max(scores_df.loc[x[0][0]][scores_df.loc[x][x][x]!=x[1]])),
-                        reverse = True
+                        # return tuple for key, second item is max match with OTHER available woman, ASC
+                        key = lambda x: (x[1],
+                        # second sort condition makes script slower, but removes need for repetition
+                                        max(scores_df.loc[x[0][0],eval('women_'+x[0][0])]
+                                            [scores_df.loc[x[0][0],eval('women_'+x[0][0])].index != x[0][1]])
+                                    )
+                        ,reverse = True
                         )[1:]
                     # if man was rejected by woman
                     # there is no point for him to make proposal 
