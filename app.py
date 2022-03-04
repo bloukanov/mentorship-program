@@ -86,8 +86,7 @@ if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 an
     sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
 
     if sign_up_mentee_mentor == 'Mentor':
-        st.write('''Great! Choose the skills you would like to share and click Submit. The more skills you add,
-        the better your match is likely to be.
+        st.write('''Great! Choose the skills you would like to share and click Submit.
         ''')
         st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
 
