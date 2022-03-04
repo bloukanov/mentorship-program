@@ -1,6 +1,4 @@
 import streamlit as st
-from streamlit.server.server import Server
-import streamlit as st
 # import sqlalchemy as db
 # from sqlalchemy import Table, Column, Integer, String, MetaData
 import pandas as pd
@@ -40,7 +38,10 @@ try:
     user = eval(headers["Rstudio-Connect-Credentials"])['user']
 except:
     user = 'you'
-# st.write(user)
+
+# found how to find session user here:
+# https://github.com/sapped/flip/blob/main/streamlit/user/user.py
+
 
 
 # engine = db.create_engine('sqlite:///data.sqlite',echo = True)
@@ -73,7 +74,7 @@ interests = pd.read_csv('interests.csv')
 prospective_mentors = pd.read_csv('prospective_mentors.csv')
 prospective_mentees = pd.read_csv('prospective_mentees.csv')
 
-st.title('MSK Development Mentor Program')
+st.title('MSK Development Mentorship Program')
 
 
 st.markdown('Welcome! You are logged in as __'+user+'__.')
@@ -85,13 +86,39 @@ if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 an
     sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
 
     if sign_up_mentee_mentor == 'Mentor':
-        mentor_interest_select = st.multiselect('Please select the skills you would like to share:',interests.interest)
+        st.write('''Great! Choose the skills you would like to share and click Submit. The more skills you add,
+        the better your match is likely to be.
+        ''')
+        st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
+
+        with st.form('mentor registration'):
+            mentor_interest_select = st.multiselect('Select one or more:',interests.interest)
+            mentor_submit = st.form_submit_button()
+            if mentor_submit:
+                try:
+                    #write to data to db
+                    st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
+                except:
+                    st.error('Oops! There was an error saving your data.')
 
     elif sign_up_mentee_mentor == 'Mentee':
-        st.write('Under construction!')
+        # st.write('Under construction!')
+        st.markdown('''Great! Please select the skills you would like to learn, __in order of preference from left to right__,
+        and click Submit.
+        ''')
+        st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
 
-
-
+        # with st.form('mentee registration'):
+        mentee_interest_select = st.multiselect('Select one or more:',interests.interest)
+        st.write('  \n'.join([str(x[0]+1)+': '+x[1] for x in list(enumerate(mentee_interest_select))]))
+        # mentee_submit = st.form_submit_button()
+        if st.button('Submit'):
+            try:
+                # add data to file
+                st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
+                # pass
+            except:
+                st.error('Oops! There was an error saving your data.')
 
 # st.write('Please select your interests ')
 
