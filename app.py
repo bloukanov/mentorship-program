@@ -1,7 +1,8 @@
 import streamlit as st
-# import sqlalchemy as db
-# from sqlalchemy import Table, Column, Integer, String, MetaData
+import sqlalchemy as db
 import pandas as pd
+import numpy as np
+from db import User, Interest, Session
 
 
 try:
@@ -29,32 +30,19 @@ def _get_full_session():
     # return session_info.session
     return session_info
 
-session = _get_full_session()
+st_session = _get_full_session()
 
 # st.write(session)
-headers = session.ws.request.headers
+headers = st_session.ws.request.headers
 # USER OF CURRENT SESSION!!!
 try:
-    user = eval(headers["Rstudio-Connect-Credentials"])['user']
+    st_user = eval(headers["Rstudio-Connect-Credentials"])['user']
 except:
-    user = 'you'
+    st_user = 'you'
 
 # found how to find session user here:
 # https://github.com/sapped/flip/blob/main/streamlit/user/user.py
 
-
-
-# engine = db.create_engine('sqlite:///data.sqlite',echo = True)
-# connection = engine.connect()
-
-# meta = MetaData()
-
-# students = Table(
-#    'students', meta, 
-#    Column('id', Integer, primary_key = True), 
-#    Column('name', String), 
-#    Column('lastname', String), 
-# )
 
 def create_tables():
     import os
@@ -70,18 +58,19 @@ def create_tables():
 
 # create_tables()
 
-interests = pd.read_csv('interests.csv')
+interests_csv = pd.read_csv('interests.csv')
 prospective_mentors = pd.read_csv('prospective_mentors.csv')
 prospective_mentees = pd.read_csv('prospective_mentees.csv')
 
 st.title('MSK Development Mentorship Program')
 
 
-st.markdown('Welcome! You are logged in as __'+user+'__.')
+st.markdown('Welcome! You are logged in as __'+st_user+'__.')
 
 
 
-if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 and len(prospective_mentees.username[prospective_mentees.username==user]) == 0:
+# if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 and len(prospective_mentees.username[prospective_mentees.username==user]) == 0:
+if User.find_by_username(st_user) is None:
     st.write('Looks like this is your first time here. Would you like to sign up as a Mentee or a Mentor? Use the panel on the left to choose.')
     sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
 
@@ -91,11 +80,15 @@ if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 an
         st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
 
         with st.form('mentor registration'):
-            mentor_interest_select = st.multiselect('Select one or more:',interests.interest)
+            mentor_interest_select = st.multiselect('Select one or more:',interests_csv.interest)
             mentor_submit = st.form_submit_button()
             if mentor_submit:
                 try:
                     #write to data to db
+                    user = User(st_user,mentor=True)
+                    user.interests = [Interest(int,np.nan) for int in mentor_interest_select]
+                    user.save_to_db()
+
                     st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
                 except:
                     st.error('Oops! There was an error saving your data.')
@@ -108,20 +101,36 @@ if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 an
         st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
 
         # with st.form('mentee registration'):
-        mentee_interest_select = st.multiselect('Select one or more:',interests.interest)
-        st.write('  \n'.join([str(x[0]+1)+': '+x[1] for x in list(enumerate(mentee_interest_select))]))
+        mentee_interest_select = st.multiselect('Select one or more:',interests_csv.interest)
+        enum = list(enumerate(mentee_interest_select))
+        ranks = [x[0]+1 for x in enum]
+        ints = [x[1] for x in enum]
+        st.write('  \n'.join([str(x[0]+1)+': '+x[1] for x in enum]))
         # mentee_submit = st.form_submit_button()
         if st.button('Submit'):
-            try:
+            # try:
                 # add data to file
-                st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
-                # pass
-            except:
-                st.error('Oops! There was an error saving your data.')
+            user = User(st_user,mentor=False)
+            user.interests = [Interest(ints[i],ranks[i]) for i in range(len(enum))]
+            user.save_to_db()
+            st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
+            # except:
+                # st.error('Oops! There was an error saving your data.')
 
-# st.write('Please select your interests ')
+else:
+    if User.is_mentor(st_user):
+        st.markdown('Nice to see you again. You have registered as a __Mentor__. The interests you selected are:')
+        ints = Interest.find_by_username(st_user)
+        # x0 is Interest object, X1 is rank, and X2 is interest
+        st.write('  \n'.join([x[2] for x in ints]))
+    else:
+        st.markdown('Nice to see you again. You have registered as a __Mentee__. The interests you selected are:')
+        user = User(st_user,User.is_mentor(st_user))
+        ints = Interest.find_by_username(st_user)
+        # x0 is Interest object, X1 is rank, and X2 is interest
+        st.write('  \n'.join([str(x[1]) + ': ' + x[2] for x in ints]))
 
-# st.text_input('')
+
+# c1 = Customers(name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com')
 
 
-# st.
