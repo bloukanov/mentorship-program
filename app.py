@@ -34,6 +34,7 @@ st_session = _get_full_session()
 
 # st.write(session)
 headers = st_session.ws.request.headers
+st.write(headers)
 # USER OF CURRENT SESSION!!!
 try:
     st_user = eval(headers["Rstudio-Connect-Credentials"])['user']
@@ -67,6 +68,8 @@ st.title('MSK Development Mentorship Program')
 
 st.markdown('Welcome! You are logged in as __'+st_user+'__.')
 
+
+# if st_user in ('LoukanoB','AjayiO',)
 
 
 # if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 and len(prospective_mentees.username[prospective_mentees.username==user]) == 0:
