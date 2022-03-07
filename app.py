@@ -83,7 +83,7 @@ def convert_data():
         ''',session.bind)
     return df.to_csv(index=False).encode('utf-8') 
 
-if st_user in (['LoukanoB', 'LoukanoB localhost', 'AjayiO', 'UrickC']):
+if st_user in ['LoukanoB', 'LoukanoB localhost', 'AjayiO', 'UrickC']:
     csv = convert_data()
     # st.write('hey')
     st.download_button(
