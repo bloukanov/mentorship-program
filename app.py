@@ -123,13 +123,22 @@ else:
         ints = Interest.find_by_username(st_user)
         # x0 is Interest object, X1 is rank, and X2 is interest
         st.write('  \n'.join([x[2] for x in ints]))
+            
     else:
         st.markdown('Nice to see you again. You have registered as a __Mentee__. The interests you selected are:')
         user = User(st_user,User.is_mentor(st_user))
         ints = Interest.find_by_username(st_user)
         # x0 is Interest object, X1 is rank, and X2 is interest
         st.write('  \n'.join([str(x[1]) + ': ' + x[2] for x in ints]))
+    
+    st.write('''To change your preferences, simply Delete your current profile 
+    and refresh the page to create a new one.
+    ''')
+    if st.button('Delete Profile'):
+        # try:
 
+        # except:
+        pass
 
 # c1 = Customers(name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com')
 
