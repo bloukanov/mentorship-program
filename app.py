@@ -34,12 +34,16 @@ st_session = _get_full_session()
 
 # st.write(session)
 headers = st_session.ws.request.headers
-st.write(headers)
+# st.write(headers['Host'])
 # USER OF CURRENT SESSION!!!
 try:
     st_user = eval(headers["Rstudio-Connect-Credentials"])['user']
 except:
-    st_user = 'you'
+    if headers['Host'] == 'localhost:8501':
+        st_user = "LoukanoB localhost"
+    else:
+        st_user = 'unknown user'
+
 
 # found how to find session user here:
 # https://github.com/sapped/flip/blob/main/streamlit/user/user.py
@@ -69,7 +73,27 @@ st.title('MSK Development Mentorship Program')
 st.markdown('Welcome! You are logged in as __'+st_user+'__.')
 
 
-# if st_user in ('LoukanoB','AjayiO',)
+# @st.cache
+def convert_data():
+    with Session.begin() as session:
+        df = pd.read_sql('''
+        select a.id as userid, a.username, a.mentor, b.interest, b.rank
+        from users a
+        left join interests b on a.id = b.userid
+        ''',session.bind)
+    return df.to_csv(index=False).encode('utf-8') 
+
+if st_user in (['LoukanoB', 'LoukanoB localhost', 'AjayiO', 'UrickC']):
+    csv = convert_data()
+    # st.write('hey')
+    st.download_button(
+        label="Download user data",
+        data=csv,
+        file_name='interests.csv',
+        mime='text/csv',
+        )
+    st.write('')
+    st.write('')
 
 
 # if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 and len(prospective_mentees.username[prospective_mentees.username==user]) == 0:
