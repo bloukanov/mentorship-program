@@ -89,9 +89,11 @@ if User.find_by_username(st_user) is None:
                     user.interests = [Interest(int,np.nan) for int in mentor_interest_select]
                     user.save_to_db()
 
-                    st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
+                    st.success('Thanks for signing up to be a mentor! Refresh the page or check back later to view or update your selections.')
                 except:
-                    st.error('Oops! There was an error saving your data.')
+                    st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
+                    DEVWFAF@mskcc.org.
+                ''')
 
     elif sign_up_mentee_mentor == 'Mentee':
         # st.write('Under construction!')
@@ -108,14 +110,16 @@ if User.find_by_username(st_user) is None:
         st.write('  \n'.join([str(x[0]+1)+': '+x[1] for x in enum]))
         # mentee_submit = st.form_submit_button()
         if st.button('Submit'):
-            # try:
+            try:
                 # add data to file
-            user = User(st_user,mentor=False)
-            user.interests = [Interest(ints[i],ranks[i]) for i in range(len(enum))]
-            user.save_to_db()
-            st.success('Thanks for signing up! Refresh the page or check back later to view or update your selections.')
-            # except:
-                # st.error('Oops! There was an error saving your data.')
+                user = User(st_user,mentor=False)
+                user.interests = [Interest(ints[i],ranks[i]) for i in range(len(enum))]
+                user.save_to_db()
+                st.success('Thanks for signing up to be a mentee! Refresh the page or check back later to view or update your selections.')
+            except:
+                st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
+                DEVWFAF@mskcc.org.
+                ''')
 
 else:
     if User.is_mentor(st_user):
@@ -126,19 +130,27 @@ else:
             
     else:
         st.markdown('Nice to see you again. You have registered as a __Mentee__. The interests you selected are:')
-        user = User(st_user,User.is_mentor(st_user))
         ints = Interest.find_by_username(st_user)
         # x0 is Interest object, X1 is rank, and X2 is interest
         st.write('  \n'.join([str(x[1]) + ': ' + x[2] for x in ints]))
     
+    st.write('')
+    st.write('')
     st.write('''To change your preferences, simply Delete your current profile 
     and refresh the page to create a new one.
     ''')
     if st.button('Delete Profile'):
-        # try:
-
-        # except:
-        pass
+        try:
+            # user = User(st_user,User.is_mentor(st_user))
+            # user.delete_from_db()
+            with Session.begin() as session:
+                session.query(Interest).filter(Interest.user.has(username=st_user)).delete(synchronize_session=False)
+                session.query(User).filter_by(username=st_user).delete(synchronize_session=False)
+                st.warning('Profile successfully deleted. Please refresh the page to create a new one.')
+        except:
+            st.error('''There was an error deleting your profile. Please try again, and if this persists contact WFAF at
+            DEVWFAF@mskcc.org.
+            ''')
 
 # c1 = Customers(name = 'Ravi Kumar', address = 'Station Road Nanded', email = 'ravi@gmail.com')
 

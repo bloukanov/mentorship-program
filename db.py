@@ -25,6 +25,10 @@ class User(Base):
          session.add(self)
       # self.session.commit()
 
+   # def delete_from_db(self):
+   #    with Session.begin() as session:
+   #       session.delete(self,synchronize_session=False)
+
    @classmethod
    def find_by_username(cls, username):
       with Session.begin() as session:
@@ -33,7 +37,8 @@ class User(Base):
    @classmethod
    def is_mentor(cls, username):
       with Session.begin() as session:
-         return session.query(cls).add_columns(text('mentor')).filter_by(username = username).first() == True
+         # print(session.query(cls).add_columns(text('mentor')).filter_by(username = username).first())
+         return session.query(cls).add_columns(text('mentor')).filter_by(username = username).first()[1] == 1
 
    
 class Interest(Base):
@@ -50,9 +55,9 @@ class Interest(Base):
       self.interest = interest
       self.rank = rank
    
-   def save_to_db(self):
-      with Session.begin() as session:
-         session.add(self)
+   # def save_to_db(self):
+   #    with Session.begin() as session:
+   #       session.add(self)
       # self.session.commit()
 
    @classmethod
