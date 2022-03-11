@@ -3,7 +3,10 @@ import sqlalchemy as db
 import pandas as pd
 import numpy as np
 from db_registration import User, Interest, Session
+from helper import track_info
 
+## CHOOSE MENTOR OR MENTEE REGISTRATION
+sign_up_mentee_mentor = 'Mentor'
 
 try:
     # Before Streamlit 0.65
@@ -63,9 +66,9 @@ def create_tables():
 
 # create_tables()
 
-interests_csv = pd.read_csv('interests.csv')
-prospective_mentors = pd.read_csv('prospective_mentors.csv')
-prospective_mentees = pd.read_csv('prospective_mentees.csv')
+interests_csv = pd.read_csv('tracks.csv')
+# prospective_mentors = pd.read_csv('prospective_mentors.csv')
+# prospective_mentees = pd.read_csv('prospective_mentees.csv')
 
 st.title('MSK Development Mentorship Program')
 
@@ -77,71 +80,82 @@ st.markdown('Welcome! You are logged in as __'+st_user+'__.')
 def convert_data():
     with Session.begin() as session:
         df = pd.read_sql('''
-        select a.id as userid, a.username, a.mentor, b.interest, b.rank
+        select 
+        a.*, 
+        b.interest, 
+        b.rank
         from users a
         left join interests b on a.id = b.userid
         ''',session.bind)
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-# if st_user in ['LoukanoB', 'LoukanoB localhost', 'AjayiO', 'UrickC']:
-#     csv = convert_data()
-#     # st.write('hey')
-#     st.download_button(
-#         label="Download user data",
-#         data=csv,
-#         file_name='interests.csv',
-#         mime='text/csv',
-#         )
-#     st.write('')
-#     st.write('')
+if st_user in ['LoukanoB', 'AjayiO', 'UrickC']:
+    csv = convert_data()
+    # st.write('hey')
+    st.download_button(
+        label="Download user data",
+        data=csv,
+        file_name='interests.csv',
+        mime='text/csv',
+        )
+    st.write('')
+    st.write('')
 
 
 # if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 and len(prospective_mentees.username[prospective_mentees.username==user]) == 0:
 if User.find_by_username(st_user) is None:
     # st.write('Looks like this is your first time here. Would you like to sign up as a Mentee or a Mentor? Use the panel on the left to choose.')
-    
-    # MENTORS SIGNUP ------
-    st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentor_ signup phase.
-    If you would like to be a _mentee_ instead, please check back at a later date.
-    ''')
-    sign_up_mentee_mentor = 'Mentor'
-
-    # MENTEES SIGNUP ------
-    # st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentee_ signup phase.
-    # The _mentor_ signup phase has closed.
-    # ''')
-    # sign_up_mentee_mentor = 'Mentee'
 
     # sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
 
     if sign_up_mentee_mentor == 'Mentor':
-        st.write('''Please choose the skills you would like to share and click Submit.
+        st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentor_ signup phase.
+        If you would like to be a _mentee_ instead, please check back at a later date.
         ''')
-        st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
+        st.write('''Below, please fill out your basic profile information, and then choose the tracks you'd like 
+        to mentor someone in. Then, click Submit.
+        ''')
 
         with st.form('mentor registration'):
-            mentor_interest_select = st.multiselect('Select one or more:',interests_csv.interest)
+            st.subheader('Profile Information (will not be used for match)')
+            with st.expander('Learn more about tracks'):
+                st.markdown(track_info)
+            col1, col2, col3 = st.columns(3)
+            fullname= col1.text_input('Full Name')
+            pronouns = col2.text_input('Pronouns')
+            city = col3.text_input('City, State')
+            col4, col5, col6 = st.columns(3)
+            job = col4.text_input('Job Title')
+            years = col5.number_input('Years of experience in role',min_value = 0)
+            st.subheader('Match Criteria')
+            mentor_interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest)
+            st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
+            team = st.selectbox('Team (will only be used if Peer Mentorship is selected as a track)',
+            ['Select One','Development Information Strategy and Operations','Development Programs','Finance','Individual and Institutional Giving'])
+            # TODO: once all profile info is shown on page refresh, make form_submit_button clear all inputs
             mentor_submit = st.form_submit_button()
             if mentor_submit:
-                try:
+                # try:
                     #write to data to db
-                    user = User(st_user,mentor=True)
-                    user.interests = [Interest(int,np.nan) for int in mentor_interest_select]
+                    user = User(st_user,True,fullname,pronouns,city,job,years)
+                    user.interests = [Interest(int,np.nan,) for int in mentor_interest_select]
                     user.save_to_db()
 
                     st.success('Thanks for signing up to be a mentor! Refresh the page or check back later to view or update your selections.')
-                except:
-                    st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
-                    DEVWFAF@mskcc.org.
-                ''')
+                # except:
+                #     st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
+                #     DEVWFAF@mskcc.org.
+                # ''')
 
     elif sign_up_mentee_mentor == 'Mentee':
-        # st.write('Under construction!')
-        st.markdown('''Great! Please select the skills you would like to learn, __in order of preference from left to right__,
+        st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentee_ signup phase.
+        The _mentor_ signup phase has closed.
+        ''')
+        st.markdown('''Please select the tracks you would like to be mentored in, __in order of preference from left to right__,
         and click Submit.
         ''')
-        st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
+        st.markdown('_Note: The more you add, the better your match is likely to be!_')
 
         # with st.form('mentee registration'):
         mentee_interest_select = st.multiselect('Select one or more:',interests_csv.interest)
@@ -164,13 +178,13 @@ if User.find_by_username(st_user) is None:
 
 else:
     if User.is_mentor(st_user):
-        st.markdown('Nice to see you again. You have registered as a __Mentor__. The interests you selected are:')
+        st.markdown('Nice to see you again. You have registered as a __Mentor__. The Tracks you selected are:')
         ints = Interest.find_by_username(st_user)
         # x0 is Interest object, X1 is rank, and X2 is interest
         st.write('  \n'.join([x[2] for x in ints]))
             
     else:
-        st.markdown('Nice to see you again. You have registered as a __Mentee__. The interests you selected are:')
+        st.markdown('Nice to see you again. You have registered as a __Mentee__. The Tracks you selected are:')
         ints = Interest.find_by_username(st_user)
         # x0 is Interest object, X1 is rank, and X2 is interest
         st.write('  \n'.join([str(x[1]) + ': ' + x[2] for x in ints]))

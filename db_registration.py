@@ -21,10 +21,15 @@ class User(Base):
    years = db.Column(db.Integer)
 
 
-   def __init__(self,username,mentor):
+   def __init__(self,username,mentor,fullname,pronouns,city,job,years):
       # self.Session = _Session
       self.username = username
       self.mentor = mentor
+      self.fullname = fullname
+      self.pronouns = pronouns
+      self.city = city
+      self.job = job
+      self.years = years
 
    def save_to_db(self):
       with Session.begin() as session:
