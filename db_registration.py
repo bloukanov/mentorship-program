@@ -14,6 +14,12 @@ class User(Base):
    id = db.Column(db.Integer, primary_key=True)
    username = db.Column(db.String)
    mentor = db.Column(db.Boolean)
+   fullname = db.Column(db.String)
+   pronouns = db.Column(db.String)
+   city = db.Column(db.String)
+   job = db.Column(db.String)
+   years = db.Column(db.Integer)
+
 
    def __init__(self,username,mentor):
       # self.Session = _Session

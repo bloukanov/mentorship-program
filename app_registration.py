@@ -2,7 +2,7 @@ import streamlit as st
 import sqlalchemy as db
 import pandas as pd
 import numpy as np
-from db import User, Interest, Session
+from db_registration import User, Interest, Session
 
 
 try:
@@ -40,7 +40,7 @@ try:
     st_user = eval(headers["Rstudio-Connect-Credentials"])['user']
 except:
     if headers['Host'] == 'localhost:8501':
-        st_user = "LoukanoB localhost"
+        st_user = "LoukanoB"
     else:
         st_user = 'unknown user'
 
@@ -83,26 +83,40 @@ def convert_data():
         ''',session.bind)
     return df.to_csv(index=False).encode('utf-8') 
 
-if st_user in ['LoukanoB', 'LoukanoB localhost', 'AjayiO', 'UrickC']:
-    csv = convert_data()
-    # st.write('hey')
-    st.download_button(
-        label="Download user data",
-        data=csv,
-        file_name='interests.csv',
-        mime='text/csv',
-        )
-    st.write('')
-    st.write('')
+# DOWNLOAD DATA BUTTON
+# if st_user in ['LoukanoB', 'LoukanoB localhost', 'AjayiO', 'UrickC']:
+#     csv = convert_data()
+#     # st.write('hey')
+#     st.download_button(
+#         label="Download user data",
+#         data=csv,
+#         file_name='interests.csv',
+#         mime='text/csv',
+#         )
+#     st.write('')
+#     st.write('')
 
 
 # if len(prospective_mentors.username[prospective_mentors.username==user]) == 0 and len(prospective_mentees.username[prospective_mentees.username==user]) == 0:
 if User.find_by_username(st_user) is None:
-    st.write('Looks like this is your first time here. Would you like to sign up as a Mentee or a Mentor? Use the panel on the left to choose.')
-    sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
+    # st.write('Looks like this is your first time here. Would you like to sign up as a Mentee or a Mentor? Use the panel on the left to choose.')
+    
+    # MENTORS SIGNUP ------
+    st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentor_ signup phase.
+    If you would like to be a _mentee_ instead, please check back at a later date.
+    ''')
+    sign_up_mentee_mentor = 'Mentor'
+
+    # MENTEES SIGNUP ------
+    # st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentee_ signup phase.
+    # The _mentor_ signup phase has closed.
+    # ''')
+    # sign_up_mentee_mentor = 'Mentee'
+
+    # sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
 
     if sign_up_mentee_mentor == 'Mentor':
-        st.write('''Great! Choose the skills you would like to share and click Submit.
+        st.write('''Please choose the skills you would like to share and click Submit.
         ''')
         st.markdown('_Note: The more skills you add, the better your match is likely to be!_')
 

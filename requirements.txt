@@ -1,7 +1,7 @@
 streamlit == 1.6.0
 # streamlit == 0.78
 sqlalchemy >= 1.4.0
-sqlite3
+# sqlite3
 # quick-sqlite
 # git+https://github.com/bloukanov/sqlalchemy
 # pysqlite3
