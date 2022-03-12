@@ -18,10 +18,11 @@ class User(Base):
    pronouns = db.Column(db.String)
    city = db.Column(db.String)
    job = db.Column(db.String)
-   years = db.Column(db.Integer)
+   years_msk = db.Column(db.Integer)
+   years_all = db.Column(db.Integer)
 
 
-   def __init__(self,username,mentor,fullname,pronouns,city,job,years):
+   def __init__(self,username,mentor,fullname,pronouns,city,job,years_msk,years_all):
       # self.Session = _Session
       self.username = username
       self.mentor = mentor
@@ -29,7 +30,8 @@ class User(Base):
       self.pronouns = pronouns
       self.city = city
       self.job = job
-      self.years = years
+      self.years_msk = years_msk
+      self.years_all = years_all
 
    def save_to_db(self):
       with Session.begin() as session:

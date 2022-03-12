@@ -110,7 +110,7 @@ if User.find_by_username(st_user) is None:
     # sign_up_mentee_mentor = st.sidebar.selectbox('Mentee or Mentor',['Select One','Mentee','Mentor'])
 
     if sign_up_mentee_mentor == 'Mentor':
-        st.markdown('''Looks like this is your first time here. You are visitng the site during the _mentor_ signup phase.
+        st.markdown('''Looks like this is your first time here. You are visitng the site during the ___mentor___ signup phase.
         If you would like to be a _mentee_ instead, please check back at a later date.
         ''')
         st.write('''Below, please fill out your basic profile information, and then choose the tracks you'd like 
@@ -127,7 +127,8 @@ if User.find_by_username(st_user) is None:
             city = col3.text_input('City, State')
             col4, col5, col6 = st.columns(3)
             job = col4.text_input('Job Title')
-            years = col5.number_input('Years of experience in role',min_value = 0)
+            years_msk = col5.number_input('Years of experience in role at MSK',min_value = 0)
+            years_all = col6.number_input('Years of experience in role anywhere',min_value=0)
             st.subheader('Match Criteria')
             mentor_interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest)
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
@@ -138,7 +139,7 @@ if User.find_by_username(st_user) is None:
             if mentor_submit:
                 # try:
                     #write to data to db
-                    user = User(st_user,True,fullname,pronouns,city,job,years)
+                    user = User(st_user,True,fullname,pronouns,city,job,years_msk,years_all)
                     user.interests = [Interest(int,np.nan,) for int in mentor_interest_select]
                     user.save_to_db()
 
