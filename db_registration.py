@@ -1,5 +1,9 @@
+import os
 import sqlalchemy as db
 engine = db.create_engine('sqlite:///data.db', echo = True)
+# engine = db.create_engine('sqlite:///' + os.path.abspath('data.db'))
+# engine = db.create_engine('sqlite:///home/loukanob')
+
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 from sqlalchemy.sql import text
@@ -20,9 +24,10 @@ class User(Base):
    job = db.Column(db.String)
    years_msk = db.Column(db.Integer)
    years_all = db.Column(db.Integer)
+   team = db.Column(db.String)
 
 
-   def __init__(self,username,mentor,fullname,pronouns,city,job,years_msk,years_all):
+   def __init__(self,username,mentor,fullname,pronouns,city,job,years_msk,years_all,team):
       # self.Session = _Session
       self.username = username
       self.mentor = mentor
@@ -32,6 +37,7 @@ class User(Base):
       self.job = job
       self.years_msk = years_msk
       self.years_all = years_all
+      self.team = team
 
    def save_to_db(self):
       with Session.begin() as session:
@@ -45,7 +51,8 @@ class User(Base):
    @classmethod
    def find_by_username(cls, username):
       with Session.begin() as session:
-         return session.query(cls).filter_by(username = username).first()
+         return session.query(cls).add_columns(text('fullname'),text('pronouns'),text('city'),
+         text('job'),text('years_msk'),text('years_all'),text('team')).filter_by(username = username).first()
 
    @classmethod
    def is_mentor(cls, username):
