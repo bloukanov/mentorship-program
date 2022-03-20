@@ -21,7 +21,6 @@ for y in ['years_msk','years_all']:
     if y not in st.session_state:
         st.session_state[y] = 0
 
-    
 try:
     # Before Streamlit 0.65
     from streamlit.ReportThread import get_report_ctx
@@ -132,7 +131,7 @@ if st_user in ['LoukanoB', 'AjayiO', 'UrickC']:
     st.write('')
 
 with st.sidebar:
-    with st.expander('Learn more about Tracks'):
+    with st.expander('Learn more about Mentorship Tracks'):
         st.markdown(track_info)
 
 
@@ -151,7 +150,7 @@ if User.find_by_username(st_user) is None:
 
     if sign_up_mentee_mentor == 'Mentor':
         st.markdown(
-        '''Looks like this is your first time here. You are visitng the site during the ___mentor___ signup phase.
+        '''Looks like this is your first time here. You are visiting the site during the ___mentor___ signup phase.
         If you would like to be a _mentee_ instead, please check back at a later date.
         '''
         )   
@@ -164,7 +163,7 @@ if User.find_by_username(st_user) is None:
 
     else:
         st.markdown(
-        '''Looks like this is your first time here. You are visitng the site during the ___mentee___ signup phase.
+        '''Looks like this is your first time here. You are visiting the site during the ___mentee___ signup phase.
         If you would like to be a _mentor_ instead, please contact DEVWFAF@mskcc.org.
         '''
         )   
@@ -177,18 +176,23 @@ if User.find_by_username(st_user) is None:
         st.markdown('_Note: The more you add, the better your match is likely to be!_')
 
         if st.session_state['interest_select'] != '':
-            interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest,default=st.session_state.interest_select)#
+            interest_select = st.multiselect(
+                '<----- More interested -------   Select one or more Tracks    ------ Less interested -------->'
+                ,interests_csv.interest,default=st.session_state.interest_select)#
         else:
-            interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest)#,default=st.session_state.interest_select
+            interest_select = st.multiselect(
+                # 'Select one or more Tracks:'
+                '<---- more interested --------- Select one or more Tracks --------- less interested ---->'
+                ,interests_csv.interest)#,default=st.session_state.interest_select
         enum = list(enumerate(interest_select))
         ranks = [x[0]+1 for x in enum]
         ints = [x[1] for x in enum]
         st.write('  \n'.join([str(x[0]+1)+': '+x[1] for x in enum]))
 
         if st.session_state['team'] != '':
-            team = st.selectbox('Team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
+            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
         else:
-            team = st.selectbox('Team (will only be used if Peer Mentorship is selected as a track)',teams)
+            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams)
 
         registration_form = st.form('Registration',clear_on_submit=True)
 
@@ -214,9 +218,9 @@ if User.find_by_username(st_user) is None:
                 interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest)#,default=st.session_state.interest_select
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
             if st.session_state['team'] != '':
-                team = st.selectbox('Team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
+                team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
             else:
-                team = st.selectbox('Team (will only be used if Peer Mentorship is selected as a track)',teams)
+                team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams)
 
         if st.form_submit_button():
             fs_users = first_submissions.username
@@ -233,7 +237,9 @@ if User.find_by_username(st_user) is None:
                 else:
                     user.interests = [Interest(ints[i],ranks[i]) for i in range(len(enum))]
                 user.save_to_db()
-                st.success('Thanks for signing up to be a mentor! Refresh the page or check back later to view or update your selections.')
+                st.success('''
+                Thanks for signing up to be a {}! Refresh the page or check back later to view or update your selections.
+                '''.format(sign_up_mentee_mentor.lower()))
             except:
                 st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
                 DEVWFAF@mskcc.org.
