@@ -7,9 +7,8 @@ import math
 
 start_all = dt.datetime.now()
 
-# df_interests = pd.read_csv('interests.csv')
-df_mentees = pd.read_csv('mentees2.csv')
-df_mentors = pd.read_csv('mentors2.csv')
+df_mentees = pd.read_csv('cwg_test_mentees.csv')
+df_mentors = pd.read_csv('cwg_test_mentors.csv')
 
 mentees = df_mentees.name.unique()
 mentors = df_mentors.name.unique()
@@ -32,10 +31,15 @@ else:
 n_pairs = len(limiting_group)
 
 pairs_scores = {}
-for i in limiting_group:
-    for j in other_group:
-        matches = limiting_df.loc[limiting_df.name == i,['interest','rank']].merge(other_df.loc[other_df.name==j,'interest'])
+for i in mentors:
+    for j in mentees:
+        matches = df_mentors.loc[df_mentors.name == i,['track','team']].merge(df_mentees.loc[df_mentees.name==j,['track','team','rank']],
+        how='inner',left_on='track',right_on='track')
+        # drop peer mentorship match rows if team does not match
+        matches = matches.drop(matches[(matches.track == 'Peer Mentorship')&(matches.team_x != matches.team_y)].index)
         pairs_scores[i+'_'+j] = sum(1/matches['rank'])
+
+# pairs_scores
 
 poss_pairs = iter(list(pairs_scores.keys()))
 
@@ -51,14 +55,18 @@ possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_gr
 # if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score
 if possibilities < 3000000:
 
-    # penalize non-matches. this does not matter for Gale-Shapley bc it is only about individual order
-    pairs_scores[pairs_scores == 0] = -1
+    # penalize non-matches. this does not matter for Gale-Shapley bc that one is only about pairwise comparisons
+    for key, value in pairs_scores.items():
+        if value == 0:
+            pairs_scores[key] = -1
+        
 
     start_loop = dt.datetime.now()
     print('looping through '+format(possibilities,',d')+' possibilities',start_loop)
 
     totals = []
     pairings_strings = []
+    # permute one group in all possible ways while keeping the other still
     for p in itertools.permutations(iter(other_group),n_pairs):
         total = 0
         string = ''
@@ -84,7 +92,7 @@ if possibilities < 3000000:
 # otherwise, Gale-Shapley algorithm does pretty well (https://towardsdatascience.com/gale-shapley-algorithm-simply-explained-caa344e643c2)
 # with groups of 10 and 9, it scored in the top 1.35% of all possible groupings.
 # randomizing the list with 350k iterations did not help
-# adding just 1 more interest, so no mentee has just one, improved performance significantly. 
+# adding just 1 more track, so no mentee has just one, improved performance significantly. 
 # it tied for 62nd place out of 3,628,800
 # it also added a little more variation between randomizations. this appears to be due to ties only though
 else:

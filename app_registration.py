@@ -118,7 +118,7 @@ def convert_data():
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-if st_user in ['LoukanoB', 'AjayiO', 'UrickC']:
+if st_user.lower() in ['loukanob', 'ajayio', 'urickc']:
     csv = convert_data()
     # st.write('hey')
     st.download_button(
