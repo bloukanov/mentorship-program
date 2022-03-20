@@ -32,7 +32,7 @@ with col1:
     st.markdown('__{}__'.format(mentee_mentor))
 
     st.subheader('Profile')
-    st.markdown(f'''_You_: {user_profile.fullname} ({user_profile.pronouns})  
+    st.markdown(f'''__{user_profile.fullname} ({user_profile.pronouns})__  
     _City, State_: {user_profile.city}  
     _Job Title_: {user_profile.job}  
     _Years of experience in role at MSK_: {user_profile.years_msk}  
@@ -67,7 +67,7 @@ with col2:
     st.markdown('__{}__'.format(not_mentee_mentor))
 
     st.subheader('Profile')
-    st.markdown(f'''_You_: {match_profile.fullname} ({match_profile.pronouns})  
+    st.markdown(f'''__{match_profile.fullname} ({match_profile.pronouns})__  
     _City, State_: {match_profile.city}  
     _Job Title_: {match_profile.job}  
     _Years of experience in role at MSK_: {match_profile.years_msk}  

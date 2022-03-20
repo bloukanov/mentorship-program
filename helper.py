@@ -51,7 +51,7 @@ headers = st_session.ws.request.headers
 try:
     st_user = eval(headers["Rstudio-Connect-Credentials"])['user']
 except:
-    if headers['Host'] == 'localhost:8501':
+    if headers['Host'][:9] == 'localhost':
         st_user = "LoukanoB"
     else:
         st_user = 'unknown user'
