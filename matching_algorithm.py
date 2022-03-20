@@ -53,7 +53,7 @@ print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.
 possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
 # if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score
-if possibilities < 3000000:
+if possibilities <3000000:
 
     # penalize non-matches. this does not matter for Gale-Shapley bc that one is only about pairwise comparisons
     for key, value in pairs_scores.items():
@@ -84,7 +84,7 @@ if possibilities < 3000000:
 
     final_df = pd.DataFrame({'pairings':pairings_strings,'score':totals}).sort_values(by='score',ascending=False).iloc[:1000000]
 
-    final_df.to_csv('result.csv',index=False)
+    final_df.to_csv('match_results_{}.csv'.format(dt.datetime.now().strftime("%Y%m%d%H%M%S")),index=False)
     print('done. time elapsed', dt.datetime.now() - start_final)
 
     print('all done. total time elapsed',dt.datetime.now() - start_all)
