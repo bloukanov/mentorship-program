@@ -18,23 +18,23 @@ st.title('MSK Development Mentorship Program')
 # only grant access to people who signed up
 st.markdown("Welcome back! You are logged in as __{}__. Your match is below.".format(st_user))
 
+mentee_mentor_list = ['Mentee','Mentor']
 user_profile = registration_data[registration_data.username == st_user].iloc[0]
+mentee_mentor = mentee_mentor_list[int(user_profile.mentor)]
 
-if user_profile.mentor == 0:
-    st.markdown('___At the bottom of this page, please select whether you accept this pairing or not.___')
+# if user_profile.mentor == 0:
+st.markdown('___At the bottom of this page, please select whether you accept this pairing or not.___')
 
 
 col1, col2 = st.columns(2)
 
-mentee_mentor_list = ['Mentee','Mentor']
 
 with col1:
-    st.markdown('## You')
+    st.markdown('''## You ({})'''.format(mentee_mentor.lower()))
+    # st.write(mentee_mentor)
     user_ints = registration_data.loc[registration_data.username == st_user,['rank','interest']]
 
-    mentee_mentor = mentee_mentor_list[int(user_profile.mentor)]
-
-    st.markdown('__{}__'.format(mentee_mentor))
+    # st.markdown('__{}__'.format(mentee_mentor))
 
     st.subheader('Profile')
     st.markdown(f'''__{user_profile.fullname} ({user_profile.pronouns})__  
@@ -58,16 +58,16 @@ with col1:
 
 
 with col2:
-    st.markdown('## Your match')
-
     not_mentee_mentor = mentee_mentor_list[1-int(user_profile.mentor)]
+
+    st.markdown('## Your match ({})'.format(not_mentee_mentor.lower()))
 
     match_username = matches.loc[matches[mentee_mentor.lower()]==st_user,not_mentee_mentor.lower()].values[0]
 
     match_profile = registration_data[registration_data.username == match_username].iloc[0]
     match_ints = registration_data.loc[registration_data.username == match_username,['rank','interest']]
 
-    st.markdown('__{}__'.format(not_mentee_mentor))
+    # st.markdown('__{}__'.format(not_mentee_mentor))
 
     st.subheader('Profile')
     st.markdown(f'''__{match_profile.fullname} ({match_profile.pronouns})__  
