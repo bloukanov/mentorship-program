@@ -1,21 +1,27 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import os
 from helper import st_user
-
 
 matches = pd.read_csv('cwg_test_matches_round1.csv')
 
-mentors = pd.read_csv('cwg_test_mentor_raw_data.csv')
-mentees = pd.read_csv('cwg_test_mentee_raw_data.csv')
+# this is a simple conact of mentee and mentor raw output from registration site
+registration_data = pd.read_csv('registration_data.csv')
 
-registration_data = pd.concat([mentors,mentees])
-
+if 'round1_accept' not in registration_data.columns:
+    registration_data['round1_accept'] = np.nan
 
 st.title('MSK Development Mentorship Program')
 # st.subheader('Results')
 
 # only grant access to people who signed up
-st.markdown('Welcome back! You are logged in as __'+st_user+'__. Your match is below.')
+st.markdown("Welcome back! You are logged in as __{}__. Your match is below.".format(st_user))
+
+user_profile = registration_data[registration_data.username == st_user].iloc[0]
+
+if user_profile.mentor == 0:
+    st.markdown('___At the bottom of this page, please select whether you accept this pairing or not.___')
 
 
 col1, col2 = st.columns(2)
@@ -24,7 +30,6 @@ mentee_mentor_list = ['Mentee','Mentor']
 
 with col1:
     st.markdown('## You')
-    user_profile = registration_data[registration_data.username == st_user].iloc[0]
     user_ints = registration_data.loc[registration_data.username == st_user,['rank','interest']]
 
     mentee_mentor = mentee_mentor_list[int(user_profile.mentor)]
@@ -86,7 +91,54 @@ with col2:
 
 
 
-### TODO: add yes/no button
+# if user_profile.mentor == 0:
+st.markdown('## Your decision')
+st.markdown('''Do you accept this pairing? If you select No, we will attempt one more matching
+round, but __there is no guarantee that you will be matched with anyone else__. If you select No now,
+you agree to risk not participating in the Pilot program.
+''')
+
+col3, col4, col5, col6, col7, col7 = st.columns(6)
+
+if col5.button('Yes, I accept this match!'):
+    try:
+        registration_data.loc[registration_data.username == st_user,'round1_accept'] = 1
+        registration_data.to_csv('registration_data.csv',index=False)   
+
+        st.success('''Thank you, your response has been recorded. Keep an eye on your inbox for next steps. 
+        We hope you enjoy your mentorship!''')
+
+    except:
+        st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
+        DEVWFAF@mskcc.org.
+        ''')
+
+if col6.button('No, I do not accept this match.'):
+    try:
+        registration_data.loc[registration_data.username == st_user,'round1_accept'] = 0
+        registration_data.to_csv('registration_data.csv',index=False)
+
+        st.warning('Thank you, your response has been recorded. We will let you know if you are matched with someone else.')
+    except:
+        st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
+        DEVWFAF@mskcc.org.
+        ''')
 
 
+@st.cache
+def convert_data(df):
+    return df.to_csv(index=False).encode('utf-8') 
 
+# DOWNLOAD DATA BUTTON
+if st_user.lower() in ['loukanob', 'ajayio', 'urickc']:
+    csv = convert_data(registration_data)
+    st.write('')
+    st.write('')
+    st.download_button(
+        label="Download user data",
+        data=csv,
+        file_name='results_round1.csv',
+        mime='text/csv',
+        )
+    st.write('')
+    st.write('')
