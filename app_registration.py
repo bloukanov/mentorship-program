@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 from db_registration import User, Interest, Session
-from helper import track_info, teams, st_user
+from helper import track_info, teams
 
 ## CHOOSE MENTOR OR MENTEE REGISTRATION
 sign_up_mentee_mentor = 'Mentor'
@@ -24,6 +24,47 @@ for y in ['years_msk','years_all']:
 
 # found how to find session user here:
 # https://github.com/sapped/flip/blob/main/streamlit/user/user.py
+
+
+#### GET USER
+try:
+    # Before Streamlit 0.65
+    from streamlit.ReportThread import get_report_ctx
+    from streamlit.server.Server import Server
+except ModuleNotFoundError:
+    try:
+    # After Streamlit 0.65
+        from streamlit.report_thread import get_report_ctx
+        from streamlit.server.server import Server
+    except: 
+    # After ~1.3
+        from streamlit.script_run_context import get_script_run_ctx as get_report_ctx
+        from streamlit.server.server import Server
+
+def _get_full_session():
+    session_id = get_report_ctx().session_id
+    session_info = Server.get_current()._get_session_info(session_id)
+
+    if session_info is None:
+        raise RuntimeError("Couldn't get your Streamlit Session object.")
+    
+    # MODIFIED ORIGINAL _get_session CODE SO WE CAN ACCESS HEADERS FOR USER
+    # return session_info.session
+    return session_info
+
+st_session = _get_full_session()
+
+# st.write(session)
+headers = st_session.ws.request.headers
+# st.write(headers['Host'])
+# USER OF CURRENT SESSION!!!
+try:
+    st_user = eval(headers["Rstudio-Connect-Credentials"])['user']
+except:
+    if headers['Host'][:9] == 'localhost':
+        st_user = "LoukanoB"
+    else:
+        st_user = 'unknown user'
 
 
 def create_tables():
@@ -117,7 +158,7 @@ if User.find_by_username(st_user) is None:
         )   
         st.write(
         '''Below, please fill out your basic profile information, and then choose the Tracks you'd like 
-        to offer for mentorship. Then, click Submit. You can learn more about the various Tracks in the panel on the left.
+        to offer for mentorship. Then, click Submit. You can learn more about the various mentorship tracks in the panel on the left.
         ''')
 
         registration_form = st.form('Registration',clear_on_submit=True)
@@ -128,8 +169,8 @@ if User.find_by_username(st_user) is None:
         If you would like to be a _mentor_ instead, please contact DEVWFAF@mskcc.org.
         '''
         )   
-        st.markdown('''Please select the tracks you would like to be mentored in, __in order of preference from left to right__.
-        Next, fill out your profile, and finally click Submit. You can learn more about the various Tracks in the panel on the left.
+        st.markdown('''Please select the tracks in which you would like to be mentored, in order of preference.
+        Next, fill out your profile, and finally click Submit. You can learn more about the various mentorship tracks in the panel on the left.
         ''')
 
         st.subheader('Match Criteria')
@@ -138,17 +179,21 @@ if User.find_by_username(st_user) is None:
 
         if st.session_state['interest_select'] != '':
             interest_select = st.multiselect(
-                '<----- More interested -------   Select one or more Tracks    ------ Less interested -------->'
+                # '<----- More interested -------   Select one or more Tracks    ------ Less interested -------->'
+                'Upon selection, please confirm that the rankings below match the order of your preferences.'
                 ,interests_csv.interest,default=st.session_state.interest_select)#
         else:
             interest_select = st.multiselect(
                 # 'Select one or more Tracks:'
-                '<---- more interested --------- Select one or more Tracks --------- less interested ---->'
+                # '<---- more interested --------- Select one or more Tracks --------- less interested ---->'
+                'Upon selection, please confirm that the rankings below match the order of your preferences.'
                 ,interests_csv.interest)#,default=st.session_state.interest_select
         enum = list(enumerate(interest_select))
         ranks = [x[0]+1 for x in enum]
         ints = [x[1] for x in enum]
         st.write('  \n'.join([str(x[0]+1)+': '+x[1] for x in enum]))
+
+        # st.write('Please confirm that the rankings above match your preferences.')
 
         if st.session_state['team'] != '':
             team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
