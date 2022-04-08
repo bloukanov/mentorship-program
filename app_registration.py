@@ -5,11 +5,11 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 from db_registration import User, Interest, Session
-from helper import track_info, teams
+from helper import track_info, teams, form_callback
 
 ## CHOOSE MENTOR OR MENTEE REGISTRATION
-sign_up_mentee_mentor = 'Mentor'
-# sign_up_mentee_mentor = 'Mentee'
+# sign_up_mentee_mentor = 'Mentor'
+sign_up_mentee_mentor = 'Mentee'
 
 
 ### INITIALIZE SESSION STATES
@@ -204,13 +204,14 @@ if User.find_by_username(st_user) is None:
 
     with registration_form:
         st.subheader('Profile Information (will not be used for match)')
+        st.write('Fields marked with a * are required.')
         col1, col2, col3 = st.columns(3)
-        fullname= col1.text_input('Full Name',value=st.session_state.fullname) #value=st.session_state.fullname,key='fullname'
+        fullname= col1.text_input('Full Name*',value=st.session_state.fullname) #value=st.session_state.fullname,key='fullname'
         pronouns = col2.text_input('Pronouns',value=st.session_state.pronouns)
         city = col3.text_input('City, State',value=st.session_state.city)
         col4, col5, col6 = st.columns(3)
-        job = col4.text_input('Job Title',value=st.session_state.job)
-        years_msk = col5.number_input('Years of experience in role at MSK',min_value = 0,value=st.session_state.years_msk)
+        job = col4.text_input('Job Title*',value=st.session_state.job)
+        years_msk = col5.number_input('Years of experience in role at MSK*',min_value = 0,value=st.session_state.years_msk)
         years_all = col6.number_input('Years of experience in role anywhere',min_value=0,value=st.session_state.years_all)
 
         if sign_up_mentee_mentor == 'Mentor':
@@ -228,28 +229,31 @@ if User.find_by_username(st_user) is None:
             else:
                 team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams)
 
-        if st.form_submit_button():
-            fs_users = first_submissions.username
-            if st_user not in list(fs_users):
-                new_fs_users = fs_users.append(pd.Series([st_user]))
-                new_times = first_submissions.first_submission.append(pd.Series([dt.datetime.now()]))
-                pd.DataFrame({'username':new_fs_users,'first_submission':new_times}).to_csv('first_submissions.csv',index=False)
-            # st.session_state.fullname = fullname
-            try:
-                # write to data to db
-                user = User(st_user,sign_up_mentee_mentor=='Mentor',fullname,pronouns,city,job,years_msk,years_all,team)
-                if sign_up_mentee_mentor=='Mentor':
-                    user.interests = [Interest(int,np.nan) for int in interest_select]
-                else:
-                    user.interests = [Interest(ints[i],ranks[i]) for i in range(len(enum))]
-                user.save_to_db()
-                st.success('''
-                Thanks for signing up to be a {}! Refresh the page or check back later to view or update your selections.
-                '''.format(sign_up_mentee_mentor.lower()))
-            except:
-                st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
-                DEVWFAF@mskcc.org.
-            ''')
+        if st.form_submit_button(): #on_click=form_callback,args=(fullname,job)
+            if fullname == '' or job == '':
+                st.error('Please fill out all required fields.')
+            else:
+                fs_users = first_submissions.username
+                if st_user not in list(fs_users):
+                    new_fs_users = fs_users.append(pd.Series([st_user]))
+                    new_times = first_submissions.first_submission.append(pd.Series([dt.datetime.now()]))
+                    pd.DataFrame({'username':new_fs_users,'first_submission':new_times}).to_csv('first_submissions.csv',index=False)
+                # st.session_state.fullname = fullname
+                try:
+                    # write to data to db
+                    user = User(st_user,sign_up_mentee_mentor=='Mentor',fullname,pronouns,city,job,years_msk,years_all,team)
+                    if sign_up_mentee_mentor=='Mentor':
+                        user.interests = [Interest(int,np.nan) for int in interest_select]
+                    else:
+                        user.interests = [Interest(ints[i],ranks[i]) for i in range(len(enum))]
+                    user.save_to_db()
+                    st.success('''
+                    Thanks for signing up to be a {}! Refresh the page or check back later to view or update your selections.
+                    '''.format(sign_up_mentee_mentor.lower()))
+                except:
+                    st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
+                    DEVWFAF@mskcc.org.
+                    ''')
 
 else:
     profile = User.find_by_username(st_user)
