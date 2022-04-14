@@ -2,14 +2,20 @@ import streamlit as st
 
 
 track_info = '''
-__Skill Based__   
-Soft skills for the workplace
+__Skill Based Mentorship__   
+This mentoring track is for those who want to enhance their soft skills in a professional 
+setting. Soft skills describe how we relate to our work environment and the people around us. 
+Examples of soft skills include time management, leadership, problem-solving, creativity, and teamwork. 
   
 __Self-Care + Support__  
-Self-care  
+Taking good care of yourself is an integral part of achieving your personal and professional goals. 
+This mentoring track is for those who want to enhance wellness, self-care, and resiliency in their 
+work life.
   
 __Peer Mentorship__  
-Would you like to be matched with someone with a similar job function to you? 
+Peer mentoring is an intentional one-on-one relationship between employees at the same or a 
+similar lateral level in the organization that involves a more experienced worker teaching new 
+knowledge and skills and providing encouragement to a less experienced worker. 
 
 '''
 

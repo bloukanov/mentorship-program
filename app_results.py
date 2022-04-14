@@ -64,7 +64,7 @@ user_profile = registration_data[registration_data.username == st_user].iloc[0]
 mentee_mentor = mentee_mentor_list[int(user_profile.mentor)]
 
 # if user_profile.mentor == 0:
-st.markdown('___At the bottom of this page, please select whether you accept this pairing or not.___')
+st.info('At the bottom of this page, please select whether you accept this pairing or not.')
 
 
 col1, col2 = st.columns(2)
@@ -78,14 +78,14 @@ with col1:
     # st.markdown('__{}__'.format(mentee_mentor))
 
     st.subheader('Profile')
-    st.markdown(f'''__{user_profile.fullname} ({user_profile.pronouns})__  
-    _City, State_: {user_profile.city}  
-    _Job Title_: {user_profile.job}  
-    _Years of experience in role at MSK_: {user_profile.years_msk}  
-    _Years of experience in role anywhere_: {user_profile.years_all}
+    st.markdown(f'''__{user_profile.fullname.upper()} ({user_profile.pronouns.lower()})__  
+    __City, State__: {user_profile.city}  
+    __Job Title__: {user_profile.job}  
+    __Years of experience in role at MSK__: {user_profile.years_msk}  
+    __Years of experience in role anywhere__: {user_profile.years_all}
     '''
     )
-    st.markdown("_Team_: "+user_profile.team)
+    st.markdown("__Team__: "+user_profile.team)
 
     st.subheader('Tracks')
 
@@ -111,14 +111,14 @@ with col2:
     # st.markdown('__{}__'.format(not_mentee_mentor))
 
     st.subheader('Profile')
-    st.markdown(f'''__{match_profile.fullname} ({match_profile.pronouns})__  
-    _City, State_: {match_profile.city}  
-    _Job Title_: {match_profile.job}  
-    _Years of experience in role at MSK_: {match_profile.years_msk}  
-    _Years of experience in role anywhere_: {match_profile.years_all}
+    st.markdown(f'''__{match_profile.fullname.upper()} ({match_profile.pronouns.lower()})__  
+    __City, State__: {match_profile.city}  
+    __Job Title__: {match_profile.job}  
+    __Years of experience in role at MSK__: {match_profile.years_msk}  
+    __Years of experience in role anywhere__: {match_profile.years_all}
     '''
     )
-    st.markdown("_Team_: "+match_profile.team)
+    st.markdown("__Team__: "+match_profile.team)
 
     st.subheader('Tracks')
 
@@ -136,42 +136,53 @@ with col2:
 st.markdown('## Your decision')
 st.markdown('''Do you accept this pairing? If you select No, we will attempt one more matching
 round, but __there is no guarantee that you will be matched with anyone else__. If you select No now,
-you agree to risk not participating in the Pilot program.
+you risk not participating in the pilot program.
 ''')
 
-col3, col4, col5, col6, col7, col7 = st.columns(6)
+# col3, col4, col5, col6, col7, col7 = st.columns(6)
 
-if col5.button('Yes, I accept this match!'):
-    try:
-        registration_data.loc[registration_data.username == st_user,'round1_accept'] = 1
-        registration_data.to_csv('registration_data.csv',index=False)   
+with st.form('decision'):
+    decision = st.radio('Accept this pairing?', ('Yes, I accept my pairing', 'No, I do not accept my pairing, and I understand the risks'))
+    if st.form_submit_button():
 
-        st.success('''Thank you, your response has been recorded. Keep an eye on your inbox for next steps. 
-        We hope you enjoy your mentorship!''')
+        if decision == 'Yes, I accept my pairing':
+            try:
+                registration_data.loc[registration_data.username == st_user,'round1_accept'] = 1
+                registration_data.to_csv('registration_data.csv',index=False)   
 
-    except:
-        st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
-        DEVWFAF@mskcc.org.
-        ''')
+                st.success('''Thank you, your response has been recorded. Keep an eye on your inbox for next steps. 
+                We hope you enjoy your mentorship!''')
 
-if col6.button('No, I do not accept this match.'):
-    try:
-        registration_data.loc[registration_data.username == st_user,'round1_accept'] = 0
-        registration_data.to_csv('registration_data.csv',index=False)
+            except:
+                st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
+                DEVWFAF@mskcc.org.
+                ''')
 
-        st.warning('Thank you, your response has been recorded. We will let you know if you are matched with someone else.')
-    except:
-        st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
-        DEVWFAF@mskcc.org.
-        ''')
+        if decision == 'No, I do not accept my pairing, and I understand the risks':
+            try:
+                registration_data.loc[registration_data.username == st_user,'round1_accept'] = 0
+                registration_data.to_csv('registration_data.csv',index=False)
 
+                st.warning('''
+                Thank you, your response has been recorded. Please keep an eye on your inbox, and 
+                we will let you know if you are matched with someone else.
+                ''')
+            except:
+                st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
+                DEVWFAF@mskcc.org.
+                ''')
+
+st.write('''
+You may also return to the [registration site](https://tlvistishny1.mskcc.org/mentee-registration-test/) to change your profile and 
+match preferences, or to remove yourself from the program.
+ ''')
 
 @st.cache
 def convert_data(df):
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-if st_user.lower() in ['loukanob', 'ajayio', 'urickc']:
+if st_user.lower() in ['loukanob', 'urickc']:
     csv = convert_data(registration_data)
     st.write('')
     st.write('')

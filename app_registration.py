@@ -120,17 +120,24 @@ def convert_data():
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-if st_user.lower() in ['loukanob', 'ajayio', 'urickc']:
+if st_user.lower() in ['loukanob', 'urickc']:
     csv = convert_data()
     # st.write('hey')
     st.download_button(
-        label="Download user data",
+        label="Download csv file",
         data=csv,
-        file_name='interests.csv',
+        file_name='server_registration.csv',
         mime='text/csv',
         )
-    st.write('')
-    st.write('')
+
+if st_user.lower() == 'loukanob':
+    with open("registration.db", "rb") as fp:
+        btn = st.download_button(
+            label="Download db file",
+            data=fp,
+            file_name="server_registration.db",
+            mime="application/octet-stream"
+        )    
 
 with st.sidebar:
     with st.expander('Learn more about Mentorship Tracks'):
@@ -208,7 +215,7 @@ if User.find_by_username(st_user) is None:
         col1, col2, col3 = st.columns(3)
         fullname= col1.text_input('Full Name*',value=st.session_state.fullname) #value=st.session_state.fullname,key='fullname'
         pronouns = col2.text_input('Pronouns',value=st.session_state.pronouns)
-        city = col3.text_input('City, State',value=st.session_state.city)
+        city = col3.text_input('City, State*',value=st.session_state.city)
         col4, col5, col6 = st.columns(3)
         job = col4.text_input('Job Title*',value=st.session_state.job)
         years_msk = col5.number_input('Years of experience in role at MSK*',min_value = 0,value=st.session_state.years_msk)
@@ -230,7 +237,7 @@ if User.find_by_username(st_user) is None:
                 team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams)
 
         if st.form_submit_button(): #on_click=form_callback,args=(fullname,job)
-            if fullname == '' or job == '':
+            if fullname == '' or job == '' or city == '':
                 st.error('Please fill out all required fields.')
             else:
                 fs_users = first_submissions.username
@@ -249,6 +256,7 @@ if User.find_by_username(st_user) is None:
                     user.save_to_db()
                     st.success('''
                     Thanks for signing up to be a {}! Refresh the page or check back later to view or update your selections.
+                    We will be in touch with next steps soon once everyone has submitted their profiles.
                     '''.format(sign_up_mentee_mentor.lower()))
                 except:
                     st.error('''There was an error saving your data. Please try again, and if this persists contact WFAF at
@@ -259,7 +267,9 @@ else:
     profile = User.find_by_username(st_user)
     ints = Interest.find_by_username(st_user)
 
-    st.markdown('Nice to see you again. You are registered as a __{}__.'.format(sign_up_mentee_mentor))
+    st.markdown('Nice to see you again. You are registered as a __{}__.'.format(sign_up_mentee_mentor) + 
+    ' We will be in touch with next steps soon once everyone has submitted their profiles.'
+    )
 
     st.subheader('Profile')
     st.markdown(f'''_You_: {profile[1]} ({profile[2]})  

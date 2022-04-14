@@ -1,6 +1,6 @@
 import os
 import sqlalchemy as db
-engine = db.create_engine('sqlite:///data.db', echo = True)
+engine = db.create_engine('sqlite:///registration.db', echo = True)
 # engine = db.create_engine('sqlite:///' + os.path.abspath('data.db'))
 # engine = db.create_engine('sqlite:///home/loukanob')
 
