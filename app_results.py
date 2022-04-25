@@ -41,8 +41,11 @@ try:
 except:
     if headers['Host'][:9] == 'localhost':
         st_user = "LoukanoB"
+        # st_user = 'urickc'
     else:
-        st_user = 'unknown user'
+        # st_user = 'unknown user'
+        # st_user = 'LoukanoB'
+        st.error('The user of this session is unknown. Please contact the developer.')
 
 
 matches = pd.read_csv('cwg_test_matches_round1.csv')
@@ -78,11 +81,12 @@ with col1:
     # st.markdown('__{}__'.format(mentee_mentor))
 
     st.subheader('Profile')
-    st.markdown(f'''__{user_profile.fullname.upper()} ({user_profile.pronouns.lower()})__  
+    # st.write(pd.isna(user_profile.pronouns))
+    st.markdown(f'''__{user_profile.fullname.upper()}{' ('+user_profile.pronouns.lower()+')' if not pd.isna(user_profile.pronouns) else ''}__  
     __City, State__: {user_profile.city}  
     __Job Title__: {user_profile.job}  
     __Years of experience in role at MSK__: {user_profile.years_msk}  
-    __Years of experience in role anywhere__: {user_profile.years_all}
+    __Total years of experience in role__: {user_profile.years_all}
     '''
     )
     st.markdown("__Team__: "+user_profile.team)
@@ -115,7 +119,7 @@ with col2:
     __City, State__: {match_profile.city}  
     __Job Title__: {match_profile.job}  
     __Years of experience in role at MSK__: {match_profile.years_msk}  
-    __Years of experience in role anywhere__: {match_profile.years_all}
+    __Total years of experience in role__: {match_profile.years_all}
     '''
     )
     st.markdown("__Team__: "+match_profile.team)
@@ -140,6 +144,11 @@ you risk not participating in the pilot program.
 ''')
 
 # col3, col4, col5, col6, col7, col7 = st.columns(6)
+
+st.write('''
+You may also return to the [registration site](https://tlvistishny1.mskcc.org/mentee-registration-test/) to change your profile and 
+match preferences, or to remove yourself from the program.
+ ''')
 
 with st.form('decision'):
     decision = st.radio('Accept this pairing?', ('Yes, I accept my pairing', 'No, I do not accept my pairing, and I understand the risks'))
@@ -172,10 +181,6 @@ with st.form('decision'):
                 DEVWFAF@mskcc.org.
                 ''')
 
-st.write('''
-You may also return to the [registration site](https://tlvistishny1.mskcc.org/mentee-registration-test/) to change your profile and 
-match preferences, or to remove yourself from the program.
- ''')
 
 @st.cache
 def convert_data(df):

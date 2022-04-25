@@ -211,7 +211,7 @@ if User.find_by_username(st_user) is None:
 
     with registration_form:
         st.subheader('Profile Information (will not be used for match)')
-        st.write('Fields marked with a * are required.')
+        st.write('Fields marked with an * are required.')
         col1, col2, col3 = st.columns(3)
         fullname= col1.text_input('Full Name*',value=st.session_state.fullname) #value=st.session_state.fullname,key='fullname'
         pronouns = col2.text_input('Pronouns',value=st.session_state.pronouns)
@@ -219,7 +219,7 @@ if User.find_by_username(st_user) is None:
         col4, col5, col6 = st.columns(3)
         job = col4.text_input('Job Title*',value=st.session_state.job)
         years_msk = col5.number_input('Years of experience in role at MSK*',min_value = 0,value=st.session_state.years_msk)
-        years_all = col6.number_input('Years of experience in role anywhere',min_value=0,value=st.session_state.years_all)
+        years_all = col6.number_input('Total years of experience in role',min_value=0,value=st.session_state.years_all)
 
         if sign_up_mentee_mentor == 'Mentor':
         # with registration_form:
@@ -276,7 +276,7 @@ else:
     _City, State_: {profile[3]}  
     _Job Title_: {profile[4]}  
     _Years of experience in role at MSK_: {profile[5]}  
-    _Years of experience in role anywhere_: {profile[6]}
+    _Total years of experience in role_: {profile[6]}
     '''
     )
 
