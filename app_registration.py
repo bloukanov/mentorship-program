@@ -176,7 +176,7 @@ if User.find_by_username(st_user) is None:
         If you would like to be a _mentor_ instead, please contact DEVWFAF@mskcc.org.
         '''
         )   
-        st.markdown('''Please select the tracks in which you would like to be mentored, in order of preference.
+        st.markdown('''Please select the tracks in which you would like to be mentored, __in order of preference__.
         Next, fill out your profile, and finally click Submit. You can learn more about the various mentorship tracks in the panel on the left.
         ''')
 

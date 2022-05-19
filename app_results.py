@@ -53,8 +53,11 @@ matches = pd.read_csv('cwg_test_matches_round1.csv')
 # this is a simple conact of mentee and mentor raw output from registration site
 registration_data = pd.read_csv('registration_data.csv')
 
-if 'round1_accept' not in registration_data.columns:
-    registration_data['round1_accept'] = np.nan
+if 'round_accept' not in registration_data.columns:
+    registration_data['round_accept'] = np.nan
+
+if 'round_reject_reason' not in registration_data.columns:
+    registration_data['round_reject_reason'] = np.nan
 
 st.title('MSK Development Mentorship Program')
 # st.subheader('Results')
@@ -152,11 +155,13 @@ match preferences, or to remove yourself from the program.
 
 with st.form('decision'):
     decision = st.radio('Accept this pairing?', ('Yes, I accept my pairing', 'No, I do not accept my pairing, and I understand the risks'))
+    rejection_reason = st.text_input('If you choose not to accept, can you please explain why?')
+    
     if st.form_submit_button():
 
         if decision == 'Yes, I accept my pairing':
             try:
-                registration_data.loc[registration_data.username == st_user,'round1_accept'] = 1
+                registration_data.loc[registration_data.username == st_user,'round_accept'] = 1
                 registration_data.to_csv('registration_data.csv',index=False)   
 
                 st.success('''Thank you, your response has been recorded. Keep an eye on your inbox for next steps. 
@@ -168,18 +173,22 @@ with st.form('decision'):
                 ''')
 
         if decision == 'No, I do not accept my pairing, and I understand the risks':
-            try:
-                registration_data.loc[registration_data.username == st_user,'round1_accept'] = 0
-                registration_data.to_csv('registration_data.csv',index=False)
+            if rejection_reason == '':
+                st.error('Please explain why you are not accepting this pairing.')
+            else:
+                try:
+                    registration_data.loc[registration_data.username == st_user,'round_accept'] = 0
+                    registration_data.loc[registration_data.username == st_user,'round_reject_reason'] = rejection_reason
+                    registration_data.to_csv('registration_data.csv',index=False)
 
-                st.warning('''
-                Thank you, your response has been recorded. Please keep an eye on your inbox, and 
-                we will let you know if you are matched with someone else.
-                ''')
-            except:
-                st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
-                DEVWFAF@mskcc.org.
-                ''')
+                    st.warning('''
+                    Thank you, your response has been recorded. Please keep an eye on your inbox, and 
+                    we will let you know if you are matched with someone else.
+                    ''')
+                except:
+                    st.error('''There was an error saving your response. Please try again, and if this persists contact WFAF at
+                    DEVWFAF@mskcc.org.
+                    ''')
 
 
 @st.cache
