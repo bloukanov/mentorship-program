@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 from db_registration import User, Interest, Session
-from helper import track_info, teams, form_callback
+from helper import track_info, teams, form_callback, interests_csv
 
 ## CHOOSE MENTOR OR MENTEE REGISTRATION
 # sign_up_mentee_mentor = 'Mentor'
@@ -82,7 +82,6 @@ def create_tables():
 
 first_submissions = pd.read_csv('first_submissions.csv')
 
-interests_csv = pd.read_csv('tracks.csv')
 # prospective_mentors = pd.read_csv('prospective_mentors.csv')
 # prospective_mentees = pd.read_csv('prospective_mentees.csv')
 
@@ -163,9 +162,11 @@ if User.find_by_username(st_user) is None:
         If you would like to be a _mentee_ instead, please check back at a later date.
         '''
         )   
-        st.write(
-        '''Below, please fill out your basic profile information, and then choose the Tracks you'd like 
-        to offer for mentorship. Then, click Submit. You can learn more about the various mentorship tracks in the panel on the left.
+        st.markdown(
+        '''To complete this form, please:  
+        * Fill out your basic profile information  
+        * Choose the Tracks you'd like to offer for mentorship (you can learn more about them in the sidebar))
+        * Click Submit
         ''')
 
         registration_form = st.form('Registration',clear_on_submit=True)
@@ -176,9 +177,14 @@ if User.find_by_username(st_user) is None:
         If you would like to be a _mentor_ instead, please contact DEVWFAF@mskcc.org.
         '''
         )   
-        st.markdown('''Please select the tracks in which you would like to be mentored, __in order of preference__.
-        Next, fill out your profile, and finally click Submit. You can learn more about the various mentorship tracks in the panel on the left.
+        st.markdown('To complete this form, please:')
+        st.markdown('''
+        * Select the Tracks in which you would like to be mentored, __in order of preference__. You can learn more about the tracks offered in the sidebar.  
+        * Fill out your profile  
+        * Click Submit!
         ''')
+
+        # st.markdown('* Hello')
 
         st.subheader('Match Criteria')
 
@@ -187,14 +193,19 @@ if User.find_by_username(st_user) is None:
         if st.session_state['interest_select'] != '':
             interest_select = st.multiselect(
                 # '<----- More interested -------   Select one or more Tracks    ------ Less interested -------->'
-                'Upon selection, please confirm that the rankings below match the order of your preferences.'
-                ,interests_csv.interest,default=st.session_state.interest_select)#
+                'Upon selection, please confirm that the rankings below match the order of your preferences.',
+                interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),
+                default=st.session_state.interest_select
+            )#
         else:
             interest_select = st.multiselect(
                 # 'Select one or more Tracks:'
                 # '<---- more interested --------- Select one or more Tracks --------- less interested ---->'
-                'Upon selection, please confirm that the rankings below match the order of your preferences.'
-                ,interests_csv.interest)#,default=st.session_state.interest_select
+                'Upon selection, please confirm that the rankings below match the order of your preferences.',
+                # ,interests_csv['category'] + ' - ' + interests_csv['track']
+                # ,interests_csv['category'].str.cat(interests_csv['track'],sep=' - ')
+                interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1)
+            )#,default=st.session_state.interest_select
         enum = list(enumerate(interest_select))
         ranks = [x[0]+1 for x in enum]
         ints = [x[1] for x in enum]
@@ -227,9 +238,16 @@ if User.find_by_username(st_user) is None:
             # with st.expander('Learn more about Tracks'):
             #     st.markdown(track_info)
             if st.session_state['interest_select'] != '':
-                interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest,default=st.session_state.interest_select)#
+                interest_select = st.multiselect(
+                    'Select one or more Tracks:',
+                    interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),
+                    default=st.session_state.interest_select
+                )#
             else:
-                interest_select = st.multiselect('Select one or more Tracks:',interests_csv.interest)#,default=st.session_state.interest_select
+                interest_select = st.multiselect(
+                    'Select one or more Tracks:',
+                    interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1)
+                )#,default=st.session_state.interest_select
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
             if st.session_state['team'] != '':
                 team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
