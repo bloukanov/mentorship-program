@@ -8,8 +8,8 @@ from db_registration import User, Interest, Session
 from helper import track_info, teams, form_callback, interests_csv
 
 ## CHOOSE MENTOR OR MENTEE REGISTRATION
-# sign_up_mentee_mentor = 'Mentor'
-sign_up_mentee_mentor = 'Mentee'
+sign_up_mentee_mentor = 'Mentor'
+# sign_up_mentee_mentor = 'Mentee'
 
 
 ### INITIALIZE SESSION STATES
@@ -162,11 +162,11 @@ if User.find_by_username(st_user) is None:
         If you would like to be a _mentee_ instead, please check back at a later date.
         '''
         )   
-        st.markdown(
-        '''To complete this form, please:  
-        * Fill out your basic profile information  
-        * Choose the Tracks you'd like to offer for mentorship (you can learn more about them in the sidebar))
-        * Click Submit
+        st.write('To complete this form, please:')
+        st.markdown('''  
+        * Fill out your basic profile information   
+        * Choose the Tracks you'd like to offer for mentorship (you can learn more about these in the sidebar)
+        * Click Submit!
         ''')
 
         registration_form = st.form('Registration',clear_on_submit=True)
