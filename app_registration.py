@@ -6,10 +6,7 @@ import numpy as np
 import datetime as dt
 from db_registration import User, Interest, Session
 from helper import track_info, teams, form_callback, interests_csv
-
-## CHOOSE MENTOR OR MENTEE REGISTRATION
-sign_up_mentee_mentor = 'Mentor'
-# sign_up_mentee_mentor = 'Mentee'
+from mentee_mentor_select import sign_up_mentee_mentor
 
 
 ### INITIALIZE SESSION STATES
@@ -125,7 +122,7 @@ if st_user.lower() in ['loukanob', 'urickc']:
     st.download_button(
         label="Download csv file",
         data=csv,
-        file_name='server_registration.csv',
+        file_name='server_registration_mentor.csv' if sign_up_mentee_mentor == 'Mentor' else 'server_registration_mentee.csv',
         mime='text/csv',
         )
 
@@ -134,12 +131,12 @@ if st_user.lower() == 'loukanob':
         btn = st.download_button(
             label="Download db file",
             data=fp,
-            file_name="server_registration.db",
+            file_name="server_registration_mentor.db" if sign_up_mentee_mentor == 'Mentor' else 'server_registration_mentee.db',
             mime="application/octet-stream"
         )    
 
 with st.sidebar:
-    with st.expander('Learn more about Mentorship Tracks'):
+    with st.expander('Learn more about mentorship Tracks'):
         st.markdown(track_info)
 
 
@@ -179,7 +176,7 @@ if User.find_by_username(st_user) is None:
         )   
         st.markdown('To complete this form, please:')
         st.markdown('''
-        * Select the Tracks in which you would like to be mentored, __in order of preference__. You can learn more about the tracks offered in the sidebar.  
+        * Select the Tracks in which you would like to be mentored, __in order of preference__ (learn more about the Tracks offered in the sidebar)  
         * Fill out your profile  
         * Click Submit!
         ''')
@@ -193,7 +190,8 @@ if User.find_by_username(st_user) is None:
         if st.session_state['interest_select'] != '':
             interest_select = st.multiselect(
                 # '<----- More interested -------   Select one or more Tracks    ------ Less interested -------->'
-                'Upon selection, please confirm that the rankings below match the order of your preferences.',
+                # 'Upon selection, please confirm that the rankings below match the order of your preferences.',
+                'Select one or more Tracks and confirm rankings prior to submission',
                 interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),
                 default=st.session_state.interest_select
             )#
@@ -201,7 +199,8 @@ if User.find_by_username(st_user) is None:
             interest_select = st.multiselect(
                 # 'Select one or more Tracks:'
                 # '<---- more interested --------- Select one or more Tracks --------- less interested ---->'
-                'Upon selection, please confirm that the rankings below match the order of your preferences.',
+                # 'Upon selection, please confirm that the rankings below match the order of your preferences.',
+                'Select one or more Tracks and confirm rankings prior to submission',
                 # ,interests_csv['category'] + ' - ' + interests_csv['track']
                 # ,interests_csv['category'].str.cat(interests_csv['track'],sep=' - ')
                 interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1)
@@ -214,9 +213,9 @@ if User.find_by_username(st_user) is None:
         # st.write('Please confirm that the rankings above match your preferences.')
 
         if st.session_state['team'] != '':
-            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
+            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a Track)',teams,index=teams.index(st.session_state.team))
         else:
-            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams)
+            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a Track)',teams)
 
         registration_form = st.form('Registration',clear_on_submit=True)
 
@@ -314,8 +313,7 @@ else:
     st.write('')
     st.write('')
     st.write('''To change your preferences, simply Delete your current profile and you will be prompted to return to the registration form,
-    pre-filled with your current information. Don't worry, the time of your first submission was recorded (as this pilot is on a first come, 
-    first serve basis).
+    pre-filled with your current information.
     ''')
 
     if st.button('Delete Profile'):
