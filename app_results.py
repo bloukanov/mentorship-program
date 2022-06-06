@@ -48,10 +48,28 @@ except:
         st.error('The user of this session is unknown. Please contact the developer.')
 
 
-matches = pd.read_csv('cwg_test_matches_round1.csv')
+matches = pd.read_csv('cwg_test2_results_round1.csv')
 
-# this is a simple conact of mentee and mentor raw output from registration site
+# this is a simple conacat of mentee and mentor raw output from registration site
 registration_data = pd.read_csv('registration_data.csv')
+
+# @st.cache
+# def convert_data(df):
+#     return df.to_csv(index=False).encode('utf-8') 
+
+# # DOWNLOAD DATA BUTTON
+# if st_user.lower() in ['loukanob', 'urickc']:
+#     csv = convert_data(registration_data)
+#     st.write('')
+#     st.write('')
+#     st.download_button(
+#         label="Download user data",
+#         data=csv,
+#         file_name='results_round1.csv',
+#         mime='text/csv',
+#         )
+#     st.write('')
+#     st.write('')
 
 if 'round_accept' not in registration_data.columns:
     registration_data['round_accept'] = np.nan
@@ -191,20 +209,3 @@ with st.form('decision'):
                     ''')
 
 
-@st.cache
-def convert_data(df):
-    return df.to_csv(index=False).encode('utf-8') 
-
-# DOWNLOAD DATA BUTTON
-if st_user.lower() in ['loukanob', 'urickc']:
-    csv = convert_data(registration_data)
-    st.write('')
-    st.write('')
-    st.download_button(
-        label="Download user data",
-        data=csv,
-        file_name='results_round1.csv',
-        mime='text/csv',
-        )
-    st.write('')
-    st.write('')

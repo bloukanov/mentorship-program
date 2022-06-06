@@ -64,18 +64,22 @@ except:
         st_user = 'unknown user'
 
 
-def create_tables():
+# def create_tables():
 
-    prospective_mentors = pd.DataFrame({'username':[],'interest':[]})
-    prospective_mentees = pd.DataFrame({'username':[],'interest':[],'rank':[]})
+#     prospective_mentors = pd.DataFrame({'username':[],'interest':[]})
+#     prospective_mentees = pd.DataFrame({'username':[],'interest':[],'rank':[]})
 
-    if not os.path.isfile('prospective_mentors.csv'):
-        prospective_mentors.to_csv('prospective_mentors.csv',index=False)
+#     if not os.path.isfile('prospective_mentors.csv'):
+#         prospective_mentors.to_csv('prospective_mentors.csv',index=False)
 
-    if not os.path.isfile('prospective_mentees.csv'):
-        prospective_mentees.to_csv('prospective_mentees.csv',index=False)
+#     if not os.path.isfile('prospective_mentees.csv'):
+#         prospective_mentees.to_csv('prospective_mentees.csv',index=False)
 
 # create_tables()
+
+if not os.path.isfile('first_submissions.csv'):
+    first_submissions = pd.DataFrame({'username':[],'first_submission':[]})
+    first_submissions.to_csv('first_submissions.csv',index=False)
 
 first_submissions = pd.read_csv('first_submissions.csv')
 
@@ -116,7 +120,7 @@ def convert_data():
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-if st_user.lower() in ['loukanob', 'urickc']:
+if st_user.lower() in ['urickc']:
     csv = convert_data()
     # st.write('hey')
     st.download_button(
@@ -126,14 +130,14 @@ if st_user.lower() in ['loukanob', 'urickc']:
         mime='text/csv',
         )
 
-if st_user.lower() == 'loukanob':
-    with open("registration.db", "rb") as fp:
-        btn = st.download_button(
-            label="Download db file",
-            data=fp,
-            file_name="server_registration_mentor.db" if sign_up_mentee_mentor == 'Mentor' else 'server_registration_mentee.db',
-            mime="application/octet-stream"
-        )    
+# if st_user.lower() == 'loukanob':
+#     with open("registration.db", "rb") as fp:
+#         btn = st.download_button(
+#             label="Download db file",
+#             data=fp,
+#             file_name="server_registration_mentor.db" if sign_up_mentee_mentor == 'Mentor' else 'server_registration_mentee.db',
+#             mime="application/octet-stream"
+#         )    
 
 with st.sidebar:
     with st.expander('Learn more about mentorship Tracks'):
@@ -264,7 +268,7 @@ if User.find_by_username(st_user) is None:
                     pd.DataFrame({'username':new_fs_users,'first_submission':new_times}).to_csv('first_submissions.csv',index=False)
                 # st.session_state.fullname = fullname
                 try:
-                    # write to data to db
+                    # write data to db
                     user = User(st_user,sign_up_mentee_mentor=='Mentor',fullname,pronouns,city,job,years_msk,years_all,team)
                     if sign_up_mentee_mentor=='Mentor':
                         user.interests = [Interest(int,np.nan) for int in interest_select]

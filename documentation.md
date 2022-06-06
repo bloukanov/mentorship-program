@@ -15,7 +15,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 
 ## transition to mentee signup
 1. Download user data from the mentor signup
-2. Restrict access of mentor app to 'Specific users or groups' and do not add any users/groups.
+2. Restrict access of mentor app to 'Specific users or groups' and do not add any users/groups. This is simply to prevent more signups without deleting the app, which we will need again during the Results phase.
 3. Subset `tracks_mentees.csv` to only the Tracks selected during mentor signup
 
 ## mentee signup

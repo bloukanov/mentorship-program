@@ -7,11 +7,13 @@ import math
 
 start_all = dt.datetime.now()
 
-df_mentees = pd.read_csv('cwg_test_mentees.csv')
-df_mentors = pd.read_csv('cwg_test_mentors.csv')
+df_mentees = pd.read_csv('server_registration_mentee_6_5_22.csv').set_index('username')
+df_mentors = pd.read_csv('server_registration_mentor_6_1_22.csv').set_index('username')
 
-mentees = df_mentees.name.unique()
-mentors = df_mentors.name.unique()
+# df_mentors
+
+mentees = df_mentees.username.unique()
+mentors = df_mentors.username.unique()
 
 # find scores of all possible pairings
 start_pairs = dt.datetime.now()
@@ -19,25 +21,27 @@ print('finding scores of all possible pairings',start_pairs)
 
 if len(mentors) <= len(mentees):
     limiting_group = mentors
-    limiting_df = df_mentors
+    limiting_df = df_mentors[['interest','team']]
     other_group = mentees
-    other_df = df_mentees
+    other_df = df_mentees[['interest','team','rank']]
 else:
     limiting_group = mentees
-    limiting_df = df_mentees
+    limiting_df = df_mentees[['interest','team','rank']]
     other_group = mentors
-    other_df = df_mentors
+    other_df = df_mentors[['interest','team']]
 
 n_pairs = len(limiting_group)
 
 pairs_scores = {}
-for i in mentors:
-    for j in mentees:
-        matches = df_mentors.loc[df_mentors.name == i,['track','team']].merge(df_mentees.loc[df_mentees.name==j,['track','team','rank']],
-        how='inner',left_on='track',right_on='track')
+matches_list = []
+for i in limiting_group:
+    for j in other_group:
+        matches = limiting_df.loc[i,:].merge(other_df.loc[j,:],
+        how='inner',left_on='interest',right_on='interest')
         # drop peer mentorship match rows if team does not match
-        matches = matches.drop(matches[(matches.track == 'Peer Mentorship')&(matches.team_x != matches.team_y)].index)
+        matches = matches.drop(matches[(matches.interest == 'Peer Mentorship')&(matches.team_x != matches.team_y)].index)
         pairs_scores[i+'_'+j] = sum(1/matches['rank'])
+        matches_list.append(matches)
 
 # pairs_scores
 
