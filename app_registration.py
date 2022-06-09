@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 from db_registration import User, Interest, Session
-from helper import track_info, teams, form_callback, interests_csv
+from helper import track_info, teams, form_callback, interests_csv, mentee_teams
 from mentee_mentor_select import sign_up_mentee_mentor
 
 
@@ -196,7 +196,7 @@ if User.find_by_username(st_user) is None:
                 # '<----- More interested -------   Select one or more Tracks    ------ Less interested -------->'
                 # 'Upon selection, please confirm that the rankings below match the order of your preferences.',
                 'Select one or more Tracks and confirm rankings prior to submission',
-                interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),
+                interests_csv.index,
                 default=st.session_state.interest_select
             )#
         else:
@@ -207,7 +207,7 @@ if User.find_by_username(st_user) is None:
                 'Select one or more Tracks and confirm rankings prior to submission',
                 # ,interests_csv['category'] + ' - ' + interests_csv['track']
                 # ,interests_csv['category'].str.cat(interests_csv['track'],sep=' - ')
-                interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1)
+                interests_csv.index
             )#,default=st.session_state.interest_select
         enum = list(enumerate(interest_select))
         ranks = [x[0]+1 for x in enum]
@@ -216,10 +216,11 @@ if User.find_by_username(st_user) is None:
 
         # st.write('Please confirm that the rankings above match your preferences.')
 
-        if st.session_state['team'] != '':
-            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a Track)',teams,index=teams.index(st.session_state.team))
-        else:
-            team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a Track)',teams)
+        if 'Peer Mentorship' in interest_select:
+            if st.session_state['team'] != '':
+                team = st.selectbox("You've selected Peer Mentorship. Please further select one of the options offered by our registered mentors:",mentee_teams,index=teams.index(st.session_state.team))
+            else:
+                team = st.selectbox("You've selected Peer Mentorship. Please further select one of the options offered by our registered mentors:",mentee_teams)
 
         registration_form = st.form('Registration',clear_on_submit=True)
 
@@ -243,13 +244,13 @@ if User.find_by_username(st_user) is None:
             if st.session_state['interest_select'] != '':
                 interest_select = st.multiselect(
                     'Select one or more Tracks:',
-                    interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),
+                    interests_csv.index,
                     default=st.session_state.interest_select
                 )#
             else:
                 interest_select = st.multiselect(
                     'Select one or more Tracks:',
-                    interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1)
+                    interests_csv.index
                 )#,default=st.session_state.interest_select
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
             if st.session_state['team'] != '':
