@@ -25,3 +25,11 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 `rsconnect deploy streamlit -n msk_rconnect_test --app-id GUID --python path-to-python.exe --entrypoint app_registration.py .`
 4. Set access permissions to 'All users - login required'
 5. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment
+
+## run mathing algorithm
+1. 
+
+
+## deploy results app
+1. 
+2. Restrict access to mentees

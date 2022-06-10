@@ -140,7 +140,7 @@ if st_user.lower() in ['urickc']:
 #         )    
 
 with st.sidebar:
-    with st.expander('Learn more about mentorship Tracks'):
+    with st.expander('Learn more about Mentorship Tracks'):
         st.markdown(track_info)
 
 
@@ -216,11 +216,13 @@ if User.find_by_username(st_user) is None:
 
         # st.write('Please confirm that the rankings above match your preferences.')
 
-        if 'Peer Mentorship' in interest_select:
+        if 'Job-Specific Skills' in interest_select:
             if st.session_state['team'] != '':
-                team = st.selectbox("You've selected Peer Mentorship. Please further select one of the options offered by our registered mentors:",mentee_teams,index=teams.index(st.session_state.team))
+                team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams,index=mentee_teams.index(st.session_state.team))
             else:
-                team = st.selectbox("You've selected Peer Mentorship. Please further select one of the options offered by our registered mentors:",mentee_teams)
+                team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams)
+        else:
+            team = ''
 
         registration_form = st.form('Registration',clear_on_submit=True)
 
@@ -247,16 +249,18 @@ if User.find_by_username(st_user) is None:
                     interests_csv.index,
                     default=st.session_state.interest_select
                 )#
+                other_select = st.text_input('Other (is there another Track not listed above that you would like to provide for mentorship?)')
             else:
                 interest_select = st.multiselect(
                     'Select one or more Tracks:',
                     interests_csv.index
                 )#,default=st.session_state.interest_select
+                other_select = st.text_input('Other (is there another Track not listed above that you would like to provide for mentorship?)')
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
             if st.session_state['team'] != '':
-                team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams,index=teams.index(st.session_state.team))
+                team = st.selectbox('Your team (will only be used if the Job-Specific Skills Track is selected)',teams,index=teams.index(st.session_state.team))
             else:
-                team = st.selectbox('Your team (will only be used if Peer Mentorship is selected as a track)',teams)
+                team = st.selectbox('Your team (will only be used if the Job-Specific Skills Track is selected)',teams)
 
         if st.form_submit_button(): #on_click=form_callback,args=(fullname,job)
             if fullname == '' or job == '' or city == '':
@@ -295,10 +299,10 @@ else:
 
     st.subheader('Profile')
     st.markdown(f'''_You_: {profile[1]} ({profile[2]})  
-    _City, State_: {profile[3]}  
-    _Job Title_: {profile[4]}  
-    _Years of experience in role at MSK_: {profile[5]}  
-    _Total years of experience in role_: {profile[6]}
+    _City, State:_ {profile[3]}  
+    _Job Title:_ {profile[4]}  
+    _Years of experience in role at MSK:_ {profile[5]}  
+    _Total years of experience in role:_ {profile[6]}
     '''
     )
 
@@ -312,8 +316,11 @@ else:
     else:
         st.write('  \n'.join([str(x[1]) + ': ' + x[2] for x in ints]))
 
-    if "Peer Mentorship" in [x[2] for x in ints]:
-        st.write("Team: "+profile[7])
+    if "Job-Specific Skills" in [x[2] for x in ints]:
+        if User.is_mentor(st_user):
+            st.markdown("_Team_: "+profile[7])
+        else:
+            st.markdown("_Job-Specific Skills selection:_ "+profile[7])
     
     st.write('')
     st.write('')
