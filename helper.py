@@ -37,11 +37,11 @@ skills and providing encouragement to a less experienced worker.
 
 teams = [
     'Select One',
-    'Development Information Strategy and Operations - Julia Gallagher',
-    'Finance - Kofi Sarkodee',
-    'Individual and Institutional Giving - Jeffrey Richard',
-    'Marketing & Communications - Katherine Klein',
-    'Peer to Peer Programs - Katherine Klein',
+    'Development Information Strategy and Operations (Julia Gallagher)',
+    'Finance (Kofi Sarkodee)',
+    'Individual and Institutional Giving (Jeffrey Richard)',
+    'Marketing & Communications (Katherine Klein)',
+    'Peer to Peer Programs (Katherine Klein)',
 ]
 
 mentor_data['peer_mentorship_tracks'] = mentor_data['team']+' - '+mentor_data['job']
