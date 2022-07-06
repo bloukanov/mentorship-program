@@ -10,15 +10,15 @@ interests_csv_mentees = interests_csv_mentors[interests_csv_mentors.index.isin(m
 #.fillna('') # fillna is for missing track in peer mentorship category
 
 interests_csv = interests_csv_mentors if sign_up_mentee_mentor == 'Mentor' else interests_csv_mentees
-skill_based_available = list(interests_csv.track[interests_csv.category=='Soft Skills'])
+skill_based_available = list(interests_csv.track[interests_csv.category=='Essential Skills'])
 self_care_available = list(interests_csv.track[interests_csv.category=='Self-Care + Support'])
 
 
 track_info = f'''
-__Soft Skills Tracks__   
-This Track is for those who want to enhance their soft skills in a professional 
-setting. Soft skills describe how we relate to our work environment and the people around us. 
-Examples of soft skills include time management, leadership, problem-solving, creativity, and teamwork. 
+__Essential Skills Tracks__   
+This Track is for those who want to enhance their essential skills in a professional 
+setting. Essential skills describe how we relate to our work environment and the people around us. 
+Examples of essential skills include time management, leadership, problem-solving, creativity, and teamwork. 
 The available Tracks are: _{', '.join(skill_based_available) if len(skill_based_available) > 0 else 'Sorry, these are not available at this time'}_.
   
 __Self-Care + Support Tracks__  
