@@ -136,7 +136,7 @@ with col2:
     # st.markdown('__{}__'.format(not_mentee_mentor))
 
     st.subheader('Profile')
-    st.markdown(f'''__{match_profile.fullname.upper()} ({match_profile.pronouns.lower()})__  
+    st.markdown(f'''__{match_profile.fullname.upper()}{' ('+match_profile.pronouns.lower()+')' if not pd.isna(match_profile.pronouns) else ''}__  
     __City, State__: {match_profile.city}  
     __Job Title__: {match_profile.job}  
     __Years of experience in role at MSK__: {match_profile.years_msk}  
