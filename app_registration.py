@@ -221,6 +221,10 @@ if User.find_by_username(st_user) is None:
                 team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams,index=mentee_teams.index(st.session_state.team))
             else:
                 team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams)
+            st.write('You can view a list of Development job descriptions here:') 
+            st.code("\\\pensdev\SDEVPDATA1\Analytics_Server\Personal Project Space\Bogdan L\\test.docx")
+            # st.markdown('You can view a list of Development job descriptions [here] (https://www.google.com/).')
+            
         else:
             team = ''
 
@@ -244,18 +248,30 @@ if User.find_by_username(st_user) is None:
             # with st.expander('Learn more about Tracks'):
             #     st.markdown(track_info)
             if st.session_state['interest_select'] != '':
+                interests_csv = pd.read_csv('tracks.csv')
+                interests_csv.set_index(interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),inplace=True)
                 interest_select = st.multiselect(
                     'Select one or more Tracks:',
                     interests_csv.index,
                     default=st.session_state.interest_select
                 )#
-                other_select = st.text_input('Other (is there another Track not listed above that you would like to provide for mentorship?)')
+                other_select = st.text_input('Other (Are there other Tracks not listed above that you would like to provide for mentorship? Please separate entries with commas):')
             else:
                 interest_select = st.multiselect(
                     'Select one or more Tracks:',
                     interests_csv.index
                 )#,default=st.session_state.interest_select
-                other_select = st.text_input('Other (is there another Track not listed above that you would like to provide for mentorship?)')
+                other_select = st.text_input('Other (Are there other Tracks not listed above that you would like to provide for mentorship? Please separate entries with commas):')
+            if other_select != '':
+                other_items = [x.strip() for x in other_select.split(',')]
+                pd.concat(
+                    [
+                        interests_csv.reset_index(drop=True),
+                        pd.DataFrame({'category':np.repeat('Other',len(other_items)),'track':other_items})
+                    ]
+                ).to_csv('tracks.csv',index=False)
+                interest_select = interest_select + ['Other - '+ x for x in other_items]
+            
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
             if st.session_state['team'] != '':
                 team = st.selectbox('Your team (will only be used if the Job-Specific Skills Track is selected)',teams,index=teams.index(st.session_state.team))
@@ -266,6 +282,7 @@ if User.find_by_username(st_user) is None:
             if fullname == '' or job == '' or city == '':
                 st.error('Please fill out all required fields.')
             else:
+                # record time of first submission
                 fs_users = first_submissions.username
                 if st_user not in list(fs_users):
                     new_fs_users = fs_users.append(pd.Series([st_user]))
