@@ -222,7 +222,7 @@ if User.find_by_username(st_user) is None:
             else:
                 team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams)
             st.write('You can view a list of Development job descriptions here:') 
-            st.code("\\\pensdev\SDEVPDATA1\Analytics_Server\Personal Project Space\Bogdan L\\test.docx")
+            st.code("H:\ShareAll\SVP Updates\Job Descriptions")
             # st.markdown('You can view a list of Development job descriptions [here] (https://www.google.com/).')
             
         else:
