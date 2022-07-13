@@ -56,13 +56,23 @@ print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.
 # total possibilities = (other_group)P(limiting_group) = n!/(n-r)!
 possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
+# penalize non-matches. this does not matter for Gale-Shapley bc that one is only about pairwise comparisons
+for key, value in pairs_scores.items():
+    if value == 0:
+        pairs_scores[key] = -1
+
+
+# penalize declined matches
+declined_matches_df = pd.read_csv('declined_matches.csv')
+declined_matches = list(declined_matches_df.mentor + '_' + declined_matches_df.mentee)
+for key in pairs_scores.keys():
+    key_split = key.split('_')
+    if key in declined_matches or key_split[1]+'_'+key_split[0] in declined_matches:
+        pairs_scores[key] = -5
+
+
 # if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score
 if possibilities < 5000000:
-
-    # penalize non-matches. this does not matter for Gale-Shapley bc that one is only about pairwise comparisons
-    for key, value in pairs_scores.items():
-        if value == 0:
-            pairs_scores[key] = -1
         
 
     start_loop = dt.datetime.now()
