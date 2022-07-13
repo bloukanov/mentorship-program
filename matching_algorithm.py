@@ -7,13 +7,13 @@ import math
 
 start_all = dt.datetime.now()
 
-df_mentees = pd.read_csv('server_registration_mentee_6_5_22.csv').set_index('username')
-df_mentors = pd.read_csv('server_registration_mentor_6_1_22.csv').set_index('username')
+df_mentees = pd.read_csv('server_registration_mentee.csv').set_index('username')
+df_mentors = pd.read_csv('server_registration_mentor.csv').set_index('username')
 
 # df_mentors
 
-mentees = df_mentees.username.unique()
-mentors = df_mentors.username.unique()
+mentees = list(df_mentees.index.unique())
+mentors = list(df_mentors.index.unique())
 
 # find scores of all possible pairings
 start_pairs = dt.datetime.now()
@@ -57,7 +57,7 @@ print('finished calcualting '+str(len(pairs_scores))+' scores. time elapsed',dt.
 possibilities = int(math.factorial(len(other_group))/math.factorial(len(other_group)-n_pairs))
 
 # if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score
-if possibilities < 3000000:
+if possibilities < 5000000:
 
     # penalize non-matches. this does not matter for Gale-Shapley bc that one is only about pairwise comparisons
     for key, value in pairs_scores.items():

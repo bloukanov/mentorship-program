@@ -119,8 +119,8 @@ def convert_data():
 
     return df.to_csv(index=False).encode('utf-8') 
 
-# DOWNLOAD DATA BUTTON
-if st_user.lower() in ['urickc','loukanob','enmant']:
+# DOWNLOAD DATA BUTTONS
+if st_user.lower() in ['urickc','loukanob','enmant','diazf','hubbarda','smithb2']:
     csv = convert_data()
     # st.write('hey')
     st.download_button(
@@ -130,7 +130,7 @@ if st_user.lower() in ['urickc','loukanob','enmant']:
         mime='text/csv',
         )
 
-if st_user.lower() in ['loukanob','enmant']:
+if st_user.lower() in ['loukanob','enmant','hubbarda','smithb2']:
     with open("registration.db", "rb") as fp:
         btn = st.download_button(
             label="Download db file",
