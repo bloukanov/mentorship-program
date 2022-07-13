@@ -30,10 +30,19 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 4. Set access permissions to 'All users - login required'
 5. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment
 
-## run mathing algorithm
-1. `python mathching_algorithm.py`
+## prepare for match
+1. Download mentee registration data
+2. Prune mentor and mentee data as desired
 
+## run matching algorithm
+1. Save mentee csv to root directory as `server_registration_mentee.csv`
+2. run `python matching_algorithm.py` from root directory
+
+## finalize matches
+1. View match output at `match_results_{timestamp}` in root directory
+2. Determine matches and save to `final_pairings.csv` in root directory. This file should have columns `mentor` and `mentee` filled with usernames.
 
 ## deploy results app
-1. 
+1. `rsconnect deploy streamlit -n msk_rconnect_test --python path-to-python.exe --entrypoint app_results.py`
 2. Restrict access to mentees
+3. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment

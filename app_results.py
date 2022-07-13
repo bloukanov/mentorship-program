@@ -48,7 +48,7 @@ except:
         st.error('The user of this session is unknown. Please contact the developer.')
 
 
-matches = pd.read_csv('cwg_test2_results_round1.csv')
+matches = pd.read_csv('final_pairings.csv')
 
 # this is a simple conacat of mentee and mentor raw output from registration site
 registration_data = pd.read_csv('registration_data.csv')
