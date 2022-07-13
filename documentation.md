@@ -1,6 +1,10 @@
 ## setup
 For now, SQLAlchemy is only supported on the Python 3.9.0 installation on the RConnect Test server, so make sure you have a Python 3.9.0 installation with `rsconnect` also installed.
 
+request RConnect Test Server deployment permissions from Juan Carlos Coronel
+
+clone the git repository and cd into it
+
 WARNING:
 DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL USER DATA WILL BE LOST.
 
@@ -27,7 +31,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 5. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment
 
 ## run mathing algorithm
-1. 
+1. `python mathching_algorithm.py`
 
 
 ## deploy results app

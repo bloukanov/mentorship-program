@@ -120,7 +120,7 @@ def convert_data():
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-if st_user.lower() in ['urickc']:
+if st_user.lower() in ['urickc','loukanob','enmant']:
     csv = convert_data()
     # st.write('hey')
     st.download_button(
@@ -130,14 +130,14 @@ if st_user.lower() in ['urickc']:
         mime='text/csv',
         )
 
-# if st_user.lower() == 'loukanob':
-#     with open("registration.db", "rb") as fp:
-#         btn = st.download_button(
-#             label="Download db file",
-#             data=fp,
-#             file_name="server_registration_mentor.db" if sign_up_mentee_mentor == 'Mentor' else 'server_registration_mentee.db',
-#             mime="application/octet-stream"
-#         )    
+if st_user.lower() in ['loukanob','enmant']:
+    with open("registration.db", "rb") as fp:
+        btn = st.download_button(
+            label="Download db file",
+            data=fp,
+            file_name="server_registration_mentor.db" if sign_up_mentee_mentor == 'Mentor' else 'server_registration_mentee.db',
+            mime="application/octet-stream"
+        )    
 
 with st.sidebar:
     with st.expander('Learn more about Mentorship Tracks'):
@@ -216,11 +216,11 @@ if User.find_by_username(st_user) is None:
 
         # st.write('Please confirm that the rankings above match your preferences.')
 
-        if 'Job-Specific Skills' in interest_select:
+        if 'Job-Specific Skills - General' in interest_select:
             if st.session_state['team'] != '':
-                team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams,index=mentee_teams.index(st.session_state.team))
+                team = st.selectbox("You've selected Job-Specific Skills - General. Please further select one of the roles offered by our registered mentors:",mentee_teams,index=mentee_teams.index(st.session_state.team))
             else:
-                team = st.selectbox("You've selected Job-Specific Skills. Please further select one of the options offered by our registered mentors:",mentee_teams)
+                team = st.selectbox("You've selected Job-Specific Skills - General. Please further select one of the roles offered by our registered mentors:",mentee_teams)
             st.write('You can view a list of Development job descriptions here:') 
             st.code("H:\ShareAll\SVP Updates\Job Descriptions")
             # st.markdown('You can view a list of Development job descriptions [here] (https://www.google.com/).')
@@ -274,9 +274,9 @@ if User.find_by_username(st_user) is None:
             
             st.markdown('_Note: The more Tracks you add, the better your match is likely to be!_')
             if st.session_state['team'] != '':
-                team = st.selectbox('Your team (will only be used if the Job-Specific Skills Track is selected)',teams,index=teams.index(st.session_state.team))
+                team = st.selectbox('Your team (will only be used if the Job-Specific Skills - General Track is selected)',teams,index=teams.index(st.session_state.team))
             else:
-                team = st.selectbox('Your team (will only be used if the Job-Specific Skills Track is selected)',teams)
+                team = st.selectbox('Your team (will only be used if the Job-Specific Skills - General Track is selected)',teams)
 
         if st.form_submit_button(): #on_click=form_callback,args=(fullname,job)
             if fullname == '' or job == '' or city == '':
@@ -333,11 +333,11 @@ else:
     else:
         st.write('  \n'.join([str(x[1]) + ': ' + x[2] for x in ints]))
 
-    if "Job-Specific Skills" in [x[2] for x in ints]:
+    if "Job-Specific Skills - General" in [x[2] for x in ints]:
         if User.is_mentor(st_user):
             st.markdown("_Team_: "+profile[7])
         else:
-            st.markdown("_Job-Specific Skills selection:_ "+profile[7])
+            st.markdown("_Job-Specific Skills - General selection:_ "+profile[7])
     
     st.write('')
     st.write('')

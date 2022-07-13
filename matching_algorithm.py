@@ -38,8 +38,8 @@ for i in limiting_group:
     for j in other_group:
         matches = limiting_df.loc[i,:].merge(other_df.loc[j,:],
         how='inner',left_on='interest',right_on='interest')
-        # drop peer mentorship match rows if team does not match
-        matches = matches.drop(matches[(matches.interest == 'Peer Mentorship')&(matches.team_x != matches.team_y)].index)
+        # drop general job specific skills if team does not match
+        matches = matches.drop(matches[(matches.interest == 'Job-Specific Skills - General')&(matches.team_x != matches.team_y)].index)
         pairs_scores[i+'_'+j] = sum(1/matches['rank'])
         matches_list.append(matches)
 
