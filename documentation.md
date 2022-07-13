@@ -19,7 +19,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 
 ## transition to mentee signup
 1. Download user data from the mentor signup
-2. Restrict access of mentor app to 'Specific users or groups' and do not add any users/groups. This is simply to prevent more signups without deleting the app, which we will need again during the Results phase.
+2. Restrict access of mentor app to 'Specific users or groups' and do not add any users/groups. This is simply to prevent more signups without deleting the app.
 3. Save mentor registration output as `server_registration_mentor.csv` in the root directory. This will update Tracks available to Mentees.
 
 ## mentee signup
@@ -43,6 +43,13 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 2. Determine matches and save to `final_pairings.csv` in root directory. This file should have columns `mentor` and `mentee` filled with usernames.
 
 ## deploy results app
+1. reinstate general access to ment
 1. `rsconnect deploy streamlit -n msk_rconnect_test --python path-to-python.exe --entrypoint app_results.py`
 2. Restrict access to mentees
 3. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment
+
+## view acceptances and potentially rerun
+1. download results data
+2. if enough people rejected, re-download mentee data in case anyone updated their information
+3. add rejections to `declined_matches.csv` with columns `mentor` and `mentee`, filled with usernames, and rerun matching algorithm
+4. finalize matches and re-publish results app

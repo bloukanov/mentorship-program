@@ -58,7 +58,7 @@ def convert_data(df):
     return df.to_csv(index=False).encode('utf-8') 
 
 # DOWNLOAD DATA BUTTON
-if st_user.lower() in ['loukanob', 'urickc']:
+if st_user.lower() in ['urickc','loukanob','enmant','diazf','hubbarda','smithb2']:
     csv = convert_data(registration_data)
     st.write('')
     st.write('')
