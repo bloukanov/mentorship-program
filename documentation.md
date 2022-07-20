@@ -1,9 +1,10 @@
 ## setup
-For now, SQLAlchemy is only supported on the Python 3.9.0 installation on the RConnect Test server, so make sure you have a Python 3.9.0 installation with `rsconnect` also installed.
+Clone this repository and `cd` into it.
+
+For now, SQLAlchemy is only supported on the Python 3.9.0 installation on the RConnect Test server, so make sure you have a Python 3.9.0 installation with `rsconnect-python` also installed. An easy way to do this is to install Anaconda and create an environment by :
+`conda env create -f conda.yaml; conda activate mentor-env`
 
 request RConnect Test Server deployment permissions from Juan Carlos Coronel
-
-clone the git repository and cd into it
 
 WARNING:
 DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL USER DATA WILL BE LOST.
