@@ -6,8 +6,6 @@ For now, SQLAlchemy is only supported on the Python 3.9.0 installation on the RC
 
 request RConnect Test Server deployment permissions from Juan Carlos Coronel
 
-clone the git repository and cd into it
-
 WARNING:
 DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL USER DATA WILL BE LOST.
 
