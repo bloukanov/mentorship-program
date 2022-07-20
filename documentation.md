@@ -58,3 +58,5 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 ## to add new Tracks
 1. add category and track name to `tracks.csv`
 2. do so prior to deploying mentor registration app, to keep consistent between apps
+
+## if need to re-deploy, save db file as registration.db in root directory to save data
