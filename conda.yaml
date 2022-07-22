@@ -1,0 +1,12 @@
+name: mentor-env
+
+channels:
+- defaults
+- conda-forge
+dependencies:
+- python==3.9.0
+- sqlalchemy
+- streamlit
+- pip
+- pip:
+  - rsconnect-python
