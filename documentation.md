@@ -33,7 +33,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 
 ## prepare for match
 1. Download mentee registration data
-2. Prune mentor and mentee data as desired
+2. Send to Felicia to prune mentor and mentee data as desired
 
 ## run matching algorithm
 1. Save mentee csv to root directory as `server_registration_mentee.csv`
@@ -41,10 +41,11 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 
 ## finalize matches
 1. View match output at `match_results_{timestamp}` in root directory
-2. Determine matches and save to `final_pairings.csv` in root directory. This file should have columns `mentor` and `mentee` filled with usernames.
+2. You can tell who is a mentor vs. mentee from `server_registration_{mentor/mentee}`
+3. Send to Felicia to determine matches and save to `final_pairings.csv` in root directory. This file should have columns `mentor` and `mentee` filled with usernames.
 
 ## deploy results app
-1. reinstate general access to ment
+1. reinstate general access to mentee app
 1. `rsconnect deploy streamlit -n msk_rconnect_test --python path-to-python.exe --entrypoint app_results.py`
 2. Restrict access to mentees
 3. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment
