@@ -54,7 +54,10 @@ matches = pd.read_csv('final_pairings.csv')
 mentors_file = pd.read_csv('server_registration_mentor.csv')
 mentees_file = pd.read_csv('server_registration_mentee.csv')
 
-registration_data = pd.concat([mentors_file, mentees_file])
+if not os.path.isfile('WEIRD_NAME_registration_data.csv'):
+    registration_data = pd.concat([mentors_file, mentees_file])
+else:
+    registration_data = pd.read_csv('WEIRD_NAME_registration_data.csv')
 
 
 # this is a simple conacat of mentee and mentor raw output from registration site
@@ -117,7 +120,7 @@ with col1:
     __Total years of experience in role__: {user_profile.years_all}
     '''
     )
-    st.markdown("__Team__: "+user_profile.team)
+    st.markdown("__Team__: "+user_profile.team if not pd.isna(user_profile.team) else '')
 
     st.subheader('Tracks')
 
@@ -150,7 +153,7 @@ with col2:
     __Total years of experience in role__: {match_profile.years_all}
     '''
     )
-    st.markdown("__Team__: "+match_profile.team)
+    st.markdown("__Team__: "+match_profile.team if not pd.isna(match_profile.team) else '')
 
     st.subheader('Tracks')
 
@@ -174,7 +177,7 @@ you risk not participating in the pilot program.
 # col3, col4, col5, col6, col7, col7 = st.columns(6)
 
 st.write('''
-You may also return to the [registration site](https://tlvistishny1.mskcc.org/mentee-registration-test/) to change your profile and 
+You may also return to the [registration site](https://tlvistishny1.mskcc.org/mentee-registration/) to change your profile and 
 match preferences, or to remove yourself from the program.
  ''')
 
@@ -187,7 +190,7 @@ with st.form('decision'):
         if decision == 'Yes, I accept my pairing':
             try:
                 registration_data.loc[registration_data.username == st_user,'round_accept'] = 1
-                registration_data.to_csv('registration_data.csv',index=False)   
+                registration_data.to_csv('WEIRD_NAME_registration_data.csv',index=False)   
 
                 st.success('''Thank you, your response has been recorded. Keep an eye on your inbox for next steps. 
                 We hope you enjoy your mentorship!''')
@@ -204,7 +207,7 @@ with st.form('decision'):
                 try:
                     registration_data.loc[registration_data.username == st_user,'round_accept'] = 0
                     registration_data.loc[registration_data.username == st_user,'round_reject_reason'] = rejection_reason
-                    registration_data.to_csv('registration_data.csv',index=False)
+                    registration_data.to_csv('WEIRD_NAME_registration_data.csv',index=False)
 
                     st.warning('''
                     Thank you, your response has been recorded. Please keep an eye on your inbox, and 

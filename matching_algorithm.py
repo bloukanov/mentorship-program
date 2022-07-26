@@ -68,7 +68,7 @@ declined_matches = list(declined_matches_df.mentor + '_' + declined_matches_df.m
 for key in pairs_scores.keys():
     key_split = key.split('_')
     if key in declined_matches or key_split[1]+'_'+key_split[0] in declined_matches:
-        pairs_scores[key] = -5
+        pairs_scores[key] = -101
 
 
 # if there are fewer than 5M possibilities, go for it. choose the pairings that result in the greatest total score

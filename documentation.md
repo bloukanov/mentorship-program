@@ -14,7 +14,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 1. Locate the app GUID for the mentor registration app under 'Info' tab of app dashboard (only necessary if app currently exists on server)
 2. Uncomment line 2 (`sign_up_mentee_mentor = 'Mentor'`) and comment out line 3 (`sign_up_mentee_mentor = 'Mentee'`) in `mentee_mentor_select.py` and SAVE.
 3. Deploy the app. cd into the project folder and run:
-`rsconnect deploy streamlit -n msk_rconnect_test --app-id GUID --python path-to-python.exe --entrypoint app_registration.py .`
+`rsconnect deploy streamlit -n msk_rconnect_test --app-id 52034ef9-02fa-469f-968f-4f7ad9d42d3a --entrypoint app_registration.py .`
 4. Set access permissions to 'All users - login required'
 5. Customize app name (Info tab) and url (Access tab) to 'mentor-registration' if this is first deployment
 
@@ -27,13 +27,13 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 1. Locate the app GUID for the mentee registration app under 'Info' tab of app dashboard (only necessary if app currently exists on server)
 2. Uncomment line 3 (`sign_up_mentee_mentor = 'Mentee'`) and comment out line 2 (`sign_up_mentee_mentor = 'Mentor'`) in `mentee_mentor_select.py` and SAVE.
 3. Deploy the app. cd into the project folder and run. If there is not already a version on the server, add the --new tag to not overwrite the mentor app.
-`rsconnect deploy streamlit -n msk_rconnect_test --app-id GUID --python path-to-python.exe --entrypoint app_registration.py .`
+`rsconnect deploy streamlit -n msk_rconnect_test --app-id 3d5c161d-7ecf-49bb-99fe-bf7e1e0e0221 --entrypoint app_registration.py .`
 4. Set access permissions to 'All users - login required'
 5. Customize app name (Info tab) and url (Access tab) to 'mentee-registration' if this is first deployment
 
 ## prepare for match
 1. Download mentee registration data
-2. Send to Felicia to prune mentor and mentee data as desired
+2. Send both registration csvs to Felicia to prune data as desired
 
 ## run matching algorithm
 1. Save mentee csv to root directory as `server_registration_mentee.csv`
@@ -46,7 +46,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 
 ## deploy results app
 1. reinstate general access to mentee app
-1. `rsconnect deploy streamlit -n msk_rconnect_test --python path-to-python.exe --entrypoint app_results.py --app-id GUID .`
+1. `rsconnect deploy streamlit -n msk_rconnect_test --app-id 6395a313-fb8e-4f10-bf03-b289a31f491e --entrypoint app_results.py .`
 2. Restrict access to mentees
 3. Customize app name (Info tab) and url (Access tab) to 'match-results' if this is first deployment
 
