@@ -251,14 +251,14 @@ if User.find_by_username(st_user) is None:
                 interests_csv = pd.read_csv('tracks.csv')
                 interests_csv.set_index(interests_csv.apply(lambda x: ' - '.join(x.dropna()), axis=1),inplace=True)
                 interest_select = st.multiselect(
-                    'Select one or more Tracks:',
+                    'Select one or more Tracks*:',
                     interests_csv.index,
                     default=st.session_state.interest_select
                 )#
                 other_select = st.text_input('Other (Are there other Tracks not listed above that you would like to provide for mentorship? Please separate entries with commas):')
             else:
                 interest_select = st.multiselect(
-                    'Select one or more Tracks:',
+                    'Select one or more Tracks*:',
                     interests_csv.index
                 )#,default=st.session_state.interest_select
                 other_select = st.text_input('Other (Are there other Tracks not listed above that you would like to provide for mentorship? Please separate entries with commas):')
