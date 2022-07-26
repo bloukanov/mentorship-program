@@ -50,8 +50,15 @@ except:
 
 matches = pd.read_csv('final_pairings.csv')
 
+
+mentors_file = pd.read_csv('server_registration_mentor.csv')
+mentees_file = pd.read_csv('server_registration_mentee.csv')
+
+registration_data = pd.concat([mentors_file, mentees_file])
+
+
 # this is a simple conacat of mentee and mentor raw output from registration site
-registration_data = pd.read_csv('registration_data.csv')
+# registration_data = pd.read_csv('registration_data.csv')
 
 # @st.cache
 def convert_data(df):
