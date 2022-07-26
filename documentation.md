@@ -54,10 +54,11 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 1. download results data
 2. if enough people rejected, re-download mentee data in case anyone updated their information
 3. add rejections to `declined_matches.csv` with columns `mentor` and `mentee`, filled with usernames, and rerun matching algorithm
-4. finalize matches and re-publish results app
+4. finalize matches and re-publish results app. be sure to set viewer access only to round 2 mentees
 
 ## to add new Tracks
 1. add category and track name to `tracks.csv`
 2. do so prior to deploying mentor registration app, to keep consistent between apps
+3. do NOT include " - " (space, dash, space) in the category name. a dash is fine without spaces
 
 ## if need to re-deploy, save db file as registration.db in root directory to save data
