@@ -6,7 +6,11 @@ mentor_data = pd.read_csv('server_registration_mentor.csv')
 
 interests_csv_mentors = pd.read_csv('tracks.csv')
 interests_csv_mentors.set_index(interests_csv_mentors.apply(lambda x: ' - '.join(x.dropna()), axis=1),inplace=True)
-interests_csv_mentees = interests_csv_mentors[interests_csv_mentors.index.isin(mentor_data.interest)]
+# interests_csv_mentees = interests_csv_mentors[interests_csv_mentors.index.isin(mentor_data.interest)]
+mentor_track_categories = [x[0] for x in mentor_data.interest.str.split('-')]
+mentor_track_values = [j[mentor_data.interest.str.find('-')[i]+2:] for i, j in enumerate(mentor_data.interest.astype(str))]
+interests_csv_mentees = pd.DataFrame({'category':mentor_track_categories,'track':mentor_track_values}).sort_values(['category','track'])
+interests_csv_mentees.set_index(interests_csv_mentees.apply(lambda x: ' - '.join(x.dropna()), axis=1),inplace=True)
 #.fillna('') # fillna is for missing track in peer mentorship category
 
 interests_csv = interests_csv_mentors if sign_up_mentee_mentor == 'Mentor' else interests_csv_mentees

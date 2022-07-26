@@ -279,6 +279,7 @@ if User.find_by_username(st_user) is None:
                 team = st.selectbox('Your team (will only be used if the Job-Specific Skills - General Track is selected)',teams)
 
         if st.form_submit_button(): #on_click=form_callback,args=(fullname,job)
+            # st.write(interest_select)
             if fullname == '' or job == '' or city == '' or len(interest_select) == 0:
                 st.error('Please fill out all required fields.')
             else:
