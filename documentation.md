@@ -19,7 +19,7 @@ DO NOT RE-PUBLISH OR REMOVE APPS FROM SERVER BEFORE DOWNLOADING USER DATA. ALL U
 5. Customize app name (Info tab) and url (Access tab) to 'mentor-registration' if this is first deployment
 
 ## transition to mentee signup
-1. Download user data from the mentor signup
+1. Download user data from the mentor signup and send to Felicia to potentially remove 'Other' selections
 2. Restrict access of mentor app to 'Specific users or groups' and do not add any users/groups. This is simply to prevent more signups without deleting the app.
 3. Save mentor registration output as `server_registration_mentor.csv` in the root directory. This will update Tracks available to Mentees.
 
