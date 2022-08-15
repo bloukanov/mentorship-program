@@ -7,8 +7,11 @@ import math
 
 start_all = dt.datetime.now()
 
-df_mentees = pd.read_csv('server_registration_mentee.csv').set_index('username')
-df_mentors = pd.read_csv('server_registration_mentor.csv').set_index('username')
+# df_mentees = pd.read_csv('server_registration_mentee.csv').set_index('username')
+# df_mentors = pd.read_csv('server_registration_mentor.csv').set_index('username')
+df_mentors = pd.read_csv('mentors3.csv').set_index('name')
+df_mentees = pd.read_csv('mentees3.csv').set_index('name')
+
 
 # df_mentors
 
@@ -211,4 +214,16 @@ else:
     winning_proposals = [hyper_proposals[i] for i in winning_indices]
     unique_winning_proposals = list(map(dict, frozenset(frozenset(i.items()) for i in winning_proposals)))
 
-        
+    unique_proposals = list(map(dict, frozenset(frozenset(i.items()) for i in hyper_proposals)))
+    universes = []
+    unique_totals = []
+    for i in unique_proposals:
+        keys = list(i.keys())
+        concat_keys = [x[0]+'_'+x[1] for x in keys]
+        universe = ' '.join(concat_keys)
+        universes.append(universe)
+        unique_totals.append(sum(i.values()))
+    results = pd.DataFrame({'universes': universes, 'totals': unique_totals}).sort_values('totals', ascending=False)
+    results.to_csv('match_results_{}.csv'.format(dt.datetime.now().strftime("%Y%m%d%H%M%S")),index=False)
+    print('Done.')    
+    
