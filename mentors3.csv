@@ -1,22 +1,22 @@
-﻿name,interest
-Zack,Analytics
-Zack,Front-line Fundraising
-Sarah,Leadership
-Sarah,Data Science
-Sarah,Analytics
-Delilah,Leadership
-Delilah,Front-line Fundraising
-Morgan,Leadership
-Morgan,Data Science
-Morgan,Analytics
-Morgan,Front-line Fundraising
-j,Leadership
-j,Data Science
-k,Analytics
-k,Front-line Fundraising
-k,Leadership
-l,Data Science
-l,Analytics
-m,Front-line Fundraising
-n,Analytics
-o,Front-line Fundraising
+name,interest,track
+Zack,Analytics,
+Zack,Front-line Fundraising,
+Sarah,Leadership,
+Sarah,Data Science,
+Sarah,Analytics,
+Delilah,Leadership,
+Delilah,Front-line Fundraising,
+Morgan,Leadership,
+Morgan,Data Science,
+Morgan,Analytics,
+Morgan,Front-line Fundraising,
+j,Leadership,
+j,Data Science,
+k,Analytics,
+k,Front-line Fundraising,
+k,Leadership,
+l,Data Science,
+l,Analytics,
+m,Front-line Fundraising,
+n,Analytics,
+o,Front-line Fundraising,
